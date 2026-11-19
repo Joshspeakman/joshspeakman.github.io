@@ -1,0 +1,61 @@
+name: Build and deploy site
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "17 13 * * *"   # daily, refreshes stars / releases / update dates
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch repo data from GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p data
+          gh api "users/Joshspeakman/repos?per_page=100&type=owner" \
+            --jq '[.[] | select(.fork|not) | {name, description, html_url, homepage, language, topics, stargazers_count, pushed_at}]' > /tmp/repos.json
+          echo '{}' > /tmp/releases.json
+          for name in $(jq -r '.[].name' /tmp/repos.json); do
+            rel=$(gh api "repos/Joshspeakman/$name/releases?per_page=1" --jq '.[0] // empty | {tag: .tag_name, url: .html_url, published_at}' 2>/dev/null || true)
+            if [ -n "$rel" ]; then
+              jq --arg n "$name" --argjson r "$rel" '. + {($n): $r}' /tmp/releases.json > /tmp/r2 && mv /tmp/r2 /tmp/releases.json
+            fi
+          done
+          jq --slurpfile rel /tmp/releases.json --arg now "$(date -u +%FT%TZ)" \
+            '{generated: $now, repos: [ .[] | . + {release: ($rel[0][.name] // null)} ]}' /tmp/repos.json > data/repos.json
+          jq '.repos | length' data/repos.json
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -r index.html .nojekyll assets data _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

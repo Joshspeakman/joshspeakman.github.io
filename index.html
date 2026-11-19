@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Josh Speakman: apps, websites, games and game restoration</title>
+<meta name="description" content="Developer building apps, websites and games, and restoring classic PC games like Diablo II, Dungeon Siege and The Sims 2 to run natively on modern machines.">
+<meta property="og:title" content="Josh Speakman">
+<meta property="og:description" content="Apps, websites, games, and classic PC games restored to run on modern machines.">
+<meta property="og:image" content="https://joshspeakman.github.io/assets/img/og.jpg">
+<meta property="og:url" content="https://joshspeakman.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F1E4A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230F1E4A'/%3E%3Crect x='6' y='7' width='5' height='18' fill='%23F5C518'/%3E%3Crect x='13' y='10' width='5' height='15' fill='%23EDEBE3'/%3E%3Crect x='20' y='5' width='6' height='20' fill='%238FA3D9'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/big-shoulders.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Big Shoulders Display";src:url(assets/fonts/big-shoulders.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Archivo";src:url(assets/fonts/archivo.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{
+  --navy:#0F1E4A; --deep:#0A1433; --panel:#14265A; --paper:#EDEBE3; --muted:#9AA6C6;
+  --yellow:#F5C518; --line:rgba(237,235,227,.14);
+  --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
+  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --wrap:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--navy);color:var(--paper);font:400 1.0625rem/1.6 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:16px;background:var(--yellow);color:var(--deep);padding:8px 12px;z-index:9}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.mark{font:800 1.35rem/1 var(--display);letter-spacing:.02em;text-decoration:none}
+.top nav{display:flex;gap:22px;font-size:.95rem}
+.top nav a{text-decoration:none;color:var(--muted)}
+.top nav a:hover{color:var(--paper)}
+
+/* hero */
+.hero{padding:34px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:56px;align-items:end}
+.hero h1{font:900 clamp(4.2rem,10.5vw,9rem)/.82 var(--display);margin:0;letter-spacing:-.01em;text-transform:uppercase}
+.hero .copy{padding-bottom:6px}
+.hero .lede{max-width:26em;font-size:clamp(1.12rem,1.7vw,1.32rem);line-height:1.45;margin:0 0 12px}
+.hero .sub{max-width:30em;color:var(--muted);margin:0}
+.hero .shelf-wrap{grid-column:1/-1}
+.hero>*{min-width:0}
+
+/* the shelf */
+.shelf-wrap{margin-top:40px;position:relative}
+.shelf{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:30px 4px 0;scrollbar-width:thin}
+.board{height:18px;background:linear-gradient(#2A3B70,#1A2A5C);border-top:2px solid #3A4E8A;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.spine{flex:0 1 auto;min-width:62px;position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:center;
+  text-decoration:none;color:var(--fg,#fff);background:var(--bg);width:var(--w,78px);height:var(--h,300px);
+  padding:14px 0 12px;border-radius:3px 3px 0 0;
+  box-shadow:inset 6px 0 0 rgba(255,255,255,.08),inset -8px 0 0 rgba(0,0,0,.22);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.spine:hover,.spine:focus-visible{transform:translateY(-22px)}
+.spine .t{writing-mode:vertical-rl;font:800 var(--fs,2.4rem)/1 var(--display);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;flex:1 1 auto;min-height:0;overflow:hidden;text-align:center}
+.spine .rule{width:60%;height:3px;background:currentColor;opacity:.35;margin:8px 0}
+.spine .y{font:700 .78rem/1 var(--body);opacity:.75}
+.spine .st{position:absolute;top:-12px;right:-8px;background:var(--yellow);color:var(--deep);font:700 .68rem/1 var(--body);padding:5px 7px;border-radius:999px;transform:rotate(8deg)}
+.spine.ghost{background:transparent;box-shadow:none;border:2px dashed rgba(237,235,227,.28);border-bottom:0;color:var(--muted)}
+.spine.ghost:hover,.spine.ghost:focus-visible{color:var(--yellow);border-color:var(--yellow)}
+
+/* sections */
+section{padding:110px 0 0}
+.h2{font:800 clamp(2.4rem,5vw,3.6rem)/.95 var(--display);text-transform:uppercase;margin:0 0 14px;letter-spacing:.005em}
+.intro{max-width:38em;color:var(--muted);margin:0 0 40px}
+
+
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+.facts li{font-size:.82rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--paper)}
+.facts li.status{background:var(--yellow);color:var(--deep);border-color:var(--yellow);font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-block;text-decoration:none;font-weight:700;font-size:.95rem;padding:10px 16px;border-radius:6px;background:var(--yellow);color:var(--deep)}
+.btn:hover{background:#FFD84A}
+.btn.ghost{background:transparent;color:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--paper)}
+.live{font-size:.85rem;color:var(--muted)}
+
+/* feature game */
+.feature{margin-top:8px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:44px;align-items:center}
+.feature + .grid{margin-top:48px}
+.feature .shots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feature .shots img{border-radius:6px}
+.feature .shots img:first-child{grid-column:1/-1}
+.feature .logo{max-width:330px;margin:0 0 18px}
+.feature p{max-width:32em}
+
+/* project rows */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;margin-top:20px}
+.proj{grid-column:span 4;background:var(--panel);border-radius:10px;padding:24px;display:flex;flex-direction:column}
+.proj.half{grid-column:span 6}
+.proj.wide{grid-column:span 8;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:center}
+.proj h3{font:800 1.9rem/1 var(--display);text-transform:uppercase;margin:0 0 10px}
+.proj p{margin:0 0 16px;color:#CBD2E6;font-size:.98rem}
+.proj .meta{margin-top:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.proj .meta a{color:var(--yellow);text-decoration:none;font-weight:700}
+.proj .meta a:hover{text-decoration:underline}
+.proj img.icon{width:56px;height:56px;margin-bottom:14px}
+.proj img.wordmark{height:38px;width:auto;margin-bottom:14px}
+.proj img.shot{border-radius:6px}
+
+/* web components: quieter list */
+.list{list-style:none;margin:20px 0 0;padding:0;border-top:1px solid var(--line)}
+.list li{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) auto;gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.list a.n{font-weight:700;text-decoration:none}
+.list a.n:hover{color:var(--yellow)}
+.list span{color:var(--muted)}
+.list .stack{font-size:.85rem;color:var(--muted);white-space:nowrap}
+
+
+footer{margin-top:120px;background:var(--deep);padding:56px 0 40px}
+footer .big{font:900 clamp(2.4rem,6vw,4.2rem)/.9 var(--display);text-transform:uppercase;margin:0 0 22px}
+footer .row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px}
+footer small{color:var(--muted);display:block}
+
+@media (max-width:900px){
+  .feature{grid-template-columns:1fr;gap:24px}
+  .proj,.proj.wide,.proj.half{grid-column:1/-1}
+  .proj.wide{grid-template-columns:1fr}
+  .list li{grid-template-columns:1fr;gap:4px}
+  .top nav{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero .copy{margin-top:24px}
+  section{padding-top:84px}
+}
+
+/* added: category stickers, restoration grid */
+.spine .st.cat-app{background:#8FD3FF}
+.spine .st.cat-game{background:var(--yellow)}
+.spine .st.cat-rest{background:#F2A7C3}
+.spine .st.cat-web{background:#B7F0A1}
+.legend{display:flex;flex-wrap:wrap;gap:16px;color:var(--muted);font-size:.88rem;margin:14px 0 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
+.shots2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 34px}
+.shots2 figure{margin:0}
+.shots2 img{border-radius:6px;aspect-ratio:16/9;object-fit:cover;width:100%}
+.shots2 figcaption{font-size:.82rem;color:var(--muted);margin-top:6px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;list-style:none;margin:0 0 40px;padding:0;counter-reset:s}
+.how li{counter-increment:s;color:var(--muted);font-size:.95rem;padding-top:14px;border-top:1px solid var(--line)}
+.how li::before{content:counter(s);font:900 1.6rem/1 var(--display);color:var(--yellow);margin-right:10px}
+.how strong{color:var(--paper);font-weight:700}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;border-top:1px solid var(--line)}
+.rcard{padding:24px 0;border-bottom:1px solid var(--line);scroll-margin-top:24px}
+.rcard:target{background:linear-gradient(90deg,rgba(245,197,24,.08),transparent 80%)}
+.rcard h3{font:800 1.9rem/1 var(--display);text-transform:uppercase;margin:0}
+.rcard .orig{color:var(--muted);font-size:.9rem;margin:4px 0 10px}
+.rcard p{margin:0 0 12px;font-size:.98rem;max-width:34em}
+.rcard .facts{margin-bottom:12px}
+.rcard .links{display:flex;flex-wrap:wrap;gap:16px;align-items:baseline;font-size:.92rem}
+.rcard .links a{color:var(--yellow);font-weight:700;text-decoration:none}
+.rcard .links a:hover{text-decoration:underline}
+.proj{scroll-margin-top:24px}
+.proj:target,.feature:target{outline:2px solid var(--yellow);outline-offset:6px}
+@media (max-width:900px){
+  .rgrid,.shots2,.how{grid-template-columns:1fr}
+  .how li{margin-bottom:12px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#apps">Skip to the work</a>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#">JS</a>
+    <nav aria-label="Sections">
+      <a href="#apps">Apps</a>
+      <a href="#games">Games</a>
+      <a href="#restoration">Restoration</a>
+      <a href="#web">Web</a>
+      <a href="https://github.com/Joshspeakman">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Josh<br>Speakman</h1>
+      <div class="copy">
+        <p class="lede">I build apps, websites and games. I also love bringing old PC games back to life so they run properly on today's machines.</p>
+        <p class="sub">By day I'm a web engineer building WordPress sites and plugins. Everything else here is stuff I make because I want it to exist.</p>
+      </div>
+
+      <div class="shelf-wrap">
+        <div class="shelf" id="shelf" aria-label="Things I've made"></div>
+        <div class="board" aria-hidden="true"></div>
+        <p class="legend"><span><i style="background:#8FD3FF"></i>App</span><span><i style="background:#F5C518"></i>Game</span><span><i style="background:#F2A7C3"></i>Restoration</span><span><i style="background:#B7F0A1"></i>Web</span><span>Pick a box to jump to it.</span></p>
+      </div>
+    </div>
+
+    <section id="apps" aria-labelledby="apps-h">
+      <h2 class="h2" id="apps-h">Apps and tools</h2>
+      <p class="intro">Desktop apps and utilities, mostly built to scratch my own itch.</p>
+      <div class="grid">
+        <article class="proj wide" id="dotfound">
+          <div>
+            <img class="icon" src="assets/img/dotfound-icon.webp" alt="" width="56" height="56">
+            <h3>dotFound</h3>
+            <p>A fast game launcher that finds every game on your PC, from Steam, GOG, Epic, Xbox and Battle.net to loose installers and portable folders, then puts them all on one shelf with real artwork.</p>
+            <div class="meta"><a href="https://github.com/Joshspeakman/dotfound/releases/latest">Download the alpha</a><span class="live" data-repo="dotfound"></span></div>
+          </div>
+          <img class="shot" src="assets/img/dotfound.webp" alt="dotFound's cover flow view of a game library" width="1400" height="788" loading="lazy">
+        </article>
+        <article class="proj" id="driftwave">
+          <img class="wordmark" src="assets/img/driftwave-logo.webp" alt="Driftwave" width="741" height="160">
+          <p>Internet radio player, now being rebuilt from scratch in Rust for Windows, macOS and Linux, with a full library view and a compact late-90s style player.</p>
+          <div class="meta"><a href="https://github.com/Joshspeakman/driftwave">Follow the rebuild</a><span class="live" data-repo="driftwave"></span></div>
+        </article>
+        <article class="proj" id="rom-cleanup">
+          <h3>ROM Cleanup</h3>
+          <p>Python organizer for ROM collections: finds duplicates, prefers the right region and format, and sorts the rest.</p>
+          <div class="meta"><a href="https://github.com/Joshspeakman/Rom-Cleanup">View source</a><span class="live" data-repo="Rom-Cleanup"></span></div>
+        </article>
+        <article class="proj" id="invoice-pro">
+          <h3>Invoice Pro</h3>
+          <p>A client-side invoice generator. Fill it in, print or save it, and nothing leaves your browser.</p>
+          <div class="meta"><a href="https://github.com/Joshspeakman/Invoice-Pro">View source</a><span class="live" data-repo="Invoice-Pro"></span></div>
+        </article>
+        <article class="proj" id="ebay">
+          <h3>eBay Resale Analyzer</h3>
+          <p>Snap a photo of an item while sourcing and get its sold count, active listings and a price to list it at.</p>
+          <div class="meta"><a href="https://github.com/Joshspeakman/ebay-resale-analyzer">View source</a><span class="live" data-repo="ebay-resale-analyzer"></span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="games" aria-labelledby="games-h">
+      <h2 class="h2" id="games-h">Games I made</h2>
+      <div class="feature" id="dead-west-railway">
+        <div class="shots">
+          <img src="assets/img/dwr-departure.webp" alt="Dead West Railway: the posse at a frontier rail station" width="1400" height="875" loading="lazy">
+          <img src="assets/img/dwr-posse.webp" alt="Driving the steam train across the desert" width="1400" height="875" loading="lazy">
+          <img src="assets/img/dwr-night.webp" alt="The railroad at night" width="1400" height="875" loading="lazy">
+        </div>
+        <div>
+          <img class="logo" src="assets/img/dwr-logo.webp" alt="Dead West Railway" width="1220" height="420">
+          <p>A co-op survival game on a haunted frontier railroad for one to six players. Keep the boiler fed, scavenge supplies and look out for each other. Play online, over your own network, two to a screen with a controller, or alone offline.</p>
+          <ul class="facts"><li>Windows</li><li>macOS</li><li>Linux</li><li>Browser</li></ul>
+          <div class="actions">
+            <a class="btn" href="https://github.com/Joshspeakman/dead-west-railway/releases">Download the game</a>
+            <a class="btn ghost" href="https://dead-west-railway.fly.dev">Play in your browser</a>
+            <span class="live" data-repo="dead-west-railway"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="proj half" id="bananageddon">
+          <h3>Bananageddon</h3>
+          <p>Rooftop banana artillery inspired by QBasic Gorillas, rebuilt as an online multiplayer browser game with a 16-bit look. The server owns the physics and the match; the client draws it.</p>
+          <div class="meta"><a href="https://github.com/Joshspeakman/Bananageddon">View source</a><span class="live" data-repo="Bananageddon"></span></div>
+        </article>
+        <article class="proj half" id="cheese">
+          <h3>Cheese the Duck</h3>
+          <p>A terminal virtual pet. Cheese has moods, a diary, trust issues and a complicated relationship with bread. Tamagotchi by way of Seaman.</p>
+          <div class="meta"><a href="https://github.com/Joshspeakman/cheese-the-duck">Install it</a><span class="live" data-repo="cheese-the-duck"></span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="restoration" aria-labelledby="rest-h">
+      <h2 class="h2" id="rest-h">Game restoration</h2>
+      <p class="intro">I grew up on these games and I want them to keep working. My current approach takes a game's original Windows or DOS code and rebuilds it as a native app, so it runs on a modern Mac without Wine, Rosetta or an emulator. You bring your own copy; none of the game is in my repos.</p>
+      <ol class="how">
+        <li><strong>Check your copy.</strong> The installer confirms it's the exact build supported and only reads from your folder.</li>
+        <li><strong>Translate the code.</strong> The original x86 executable is recompiled into C, ahead of time.</li>
+        <li><strong>Build the app.</strong> That C is compiled for arm64 and linked to a runtime that swaps Windows and DirectX for Metal and Core Audio.</li>
+      </ol>
+      <div class="shots2">
+        <figure><img src="assets/img/openpark.webp" alt="Theme Park running natively on a Mac" width="1280" height="722" loading="lazy"><figcaption>Theme Park, running natively.</figcaption></figure>
+        <figure><img src="assets/img/sims2.webp" alt="The Sims 2 neighborhood view running natively on a Mac" width="1298" height="795" loading="lazy"><figcaption>The Sims 2, running natively.</figcaption></figure>
+      </div>
+      <div class="rgrid" id="port-list"></div>
+    </section>
+
+    <section id="web" aria-labelledby="web-h">
+      <h2 class="h2" id="web-h">Web work</h2>
+      <p class="intro">Building and maintaining websites is my day job, mostly WordPress sites, custom plugins and the hosting and DNS behind them. These are a few pieces I've open-sourced along the way.</p>
+      <ul class="list">
+        <li id="testimonial-slider"><a class="n" href="https://github.com/Joshspeakman/advanced-testimonial-slider">Testimonial slider</a><span>WordPress plugin with video popups, background images and mobile swipe.</span><span class="stack">PHP, JS</span></li>
+        <li><a class="n" href="https://github.com/Joshspeakman/YouTube-Video-Player-with-Custom-Controls">YouTube player</a><span>A YouTube embed with your own controls instead of YouTube's.</span><span class="stack">HTML, JS</span></li>
+        <li><a class="n" href="https://github.com/Joshspeakman/Seamless-Hero-Video-Background">Hero video background</a><span>Full-bleed looping YouTube video behind a hero section, with no visible player chrome.</span><span class="stack">HTML, CSS, JS</span></li>
+        <li><a class="n" href="https://github.com/Joshspeakman/Responsive-Image-Carousel">Image carousel</a><span>A small, responsive image carousel in vanilla JavaScript.</span><span class="stack">HTML, JS</span></li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<footer id="next">
+  <div class="wrap">
+    <p class="big">Got a bug, a question or an idea?</p>
+    <div class="row">
+      <a class="btn" href="https://github.com/Joshspeakman">Find me on GitHub</a>
+      <a class="btn ghost" href="https://ko-fi.com/speakerjosh">Buy me a coffee on Ko-fi</a>
+    </div>
+    <small>Open an issue on any repo and I'll see it. Game names belong to their publishers; my restoration projects don't include any of their files.</small>
+    <small id="built"></small>
+  </div>
+</footer>
+
+<script>
+// Restoration projects, oldest original first.
+const PORTS = [
+  {repo:"OpenPark", title:"Theme Park", year:"1994", by:"Bullfrog", status:"Beta 1.4", plats:["macOS","Windows and Linux next"],
+   blurb:"The DOS original, recompiled with a native host. No DOSBox. Adds widescreen, zoom and extras from other editions."},
+  {repo:"delta-force-macos", title:"Delta Force 1 & 2", year:"1998", by:"NovaLogic", status:"Beta 1", plats:["macOS","Linux"],
+   blurb:"Both games from your Steam copies, with Metal on the Mac and OpenGL on Linux running the same recompiled code."},
+  {repo:"rainbow-six-macos", title:"Rainbow Six", year:"1998", by:"Red Storm", status:"Multiplayer in alpha", plats:["macOS","Linux"],
+   blurb:"The GOG 1.04 release. Single player runs; the game's own LAN co-op, Mac and Linux players together, is in alpha testing."},
+  {repo:"sims-legacy-macos", title:"The Sims", year:"2000", by:"Maxis", status:"Beta 1", plats:["macOS"],
+   blurb:"The 2025 Legacy Collection. The game draws with Vulkan, and the app runs that Vulkan directly on Metal."},
+  {repo:"diablo-2-macos", title:"Diablo II", year:"2000", by:"Blizzard North", status:"Beta 4", plats:["macOS"],
+   blurb:"Diablo II and Lord of Destruction 1.14d. Drop your game folder on the app and it builds itself, with the original Glide renderer on Metal."},
+  {repo:"dungeon-siege-macos", title:"Dungeon Siege", year:"2002", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
+   blurb:"The full campaign, Legends of Aranna, multiplayer with Windows players and native EAX environmental audio."},
+  {repo:"sims-2-macos", title:"The Sims 2", year:"2004", by:"Maxis", status:"Beta 1", plats:["macOS"],
+   blurb:"The Legacy Collection from Steam on Metal. Your game folder is only read; nothing is written to it."},
+  {repo:"dungeon-siege-2-macos", title:"Dungeon Siege II", year:"2005", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
+   blurb:"The GOG 2.3 release at 120 fps with LAN multiplayer and EAX audio. Builds on your Mac in about six minutes."}
+];
+
+// The shelf: a mix of everything, styled like boxed software.
+const CAT = {app:["cat-app","App"], game:["cat-game","Game"], rest:["cat-rest","Restored"], web:["cat-web","Web"]};
+const SHELF = [
+  {t:"Dead West Railway", cat:"game", href:"#dead-west-railway", bg:"#7A2E14", fg:"#F3C97A", h:380, w:104, foot:"JS"},
+  {t:"dotFound", cat:"app", href:"#dotfound", bg:"#1F2A3C", fg:"#F5A524", h:300, w:96, foot:"JS"},
+  {t:"Diablo II", cat:"rest", href:"#port-diablo-2-macos", bg:"#5E1210", fg:"#E9D9B8", h:390, w:100, foot:"2000"},
+  {t:"Driftwave", cat:"app", href:"#driftwave", bg:"#D9573F", fg:"#FFF4E8", h:320, w:94, foot:"JS"},
+  {t:"Dungeon Siege", cat:"rest", href:"#port-dungeon-siege-macos", bg:"#24452B", fg:"#E6D7A6", h:360, w:104, foot:"2002"},
+  {t:"Bananageddon", cat:"game", href:"#bananageddon", bg:"#F2D33A", fg:"#3B2A0A", h:290, w:96, foot:"JS"},
+  {t:"The Sims 2", cat:"rest", href:"#port-sims-2-macos", bg:"#3E9B3A", fg:"#FFFFFF", h:340, w:100, foot:"2004"},
+  {t:"Testimonial Slider", cat:"web", href:"#testimonial-slider", bg:"#2D6E7E", fg:"#E8F7F5", h:310, w:90, foot:"WP"},
+  {t:"Theme Park", cat:"rest", href:"#port-OpenPark", bg:"#5B2A86", fg:"#FFD84A", h:300, w:98, foot:"1994"},
+  {t:"Cheese the Duck", cat:"game", href:"#cheese", bg:"#F1E6C4", fg:"#3A3326", h:330, w:92, foot:"JS"}
+];
+
+const shelf = document.getElementById("shelf");
+const list = document.getElementById("port-list");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+for (const b of SHELF) {
+  const a = document.createElement("a");
+  a.className = "spine";
+  a.href = b.href;
+  a.style.cssText = `--bg:${b.bg};--fg:${b.fg};--h:${b.h}px;--w:${b.w}px`;
+  a.setAttribute("aria-label", `${b.t}, ${CAT[b.cat][1]}`);
+  a.innerHTML = `<span class="st ${CAT[b.cat][0]}">${CAT[b.cat][1]}</span><span class="t">${esc(b.t)}</span><span class="rule" aria-hidden="true"></span><span class="y">${esc(b.foot)}</span>`;
+  shelf.appendChild(a);
+}
+const ghost = document.createElement("a");
+ghost.className = "spine ghost";
+ghost.href = "#next";
+ghost.style.cssText = "--h:280px;--w:92px";
+ghost.innerHTML = '<span class="t">What\'s next?</span><span class="rule" aria-hidden="true"></span><span class="y">Ideas</span>';
+ghost.setAttribute("aria-label", "Send me an idea");
+shelf.appendChild(ghost);
+
+for (const p of PORTS) {
+  const el = document.createElement("article");
+  el.className = "rcard";
+  el.id = "port-" + p.repo;
+  el.innerHTML = `<h3>${esc(p.title)}</h3>
+    <p class="orig">${esc(p.by)}, ${p.year}</p>
+    <p>${esc(p.blurb)}</p>
+    <ul class="facts"><li class="status">${esc(p.status)}</li>${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <div class="links"><a href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a><a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>`;
+  list.appendChild(el);
+}
+
+// Shrink each spine title until it fits the box, the way a real spine is typeset.
+function fitSpines(){
+  document.querySelectorAll(".spine .t").forEach(t => {
+    t.style.fontSize = "";
+    let size = parseFloat(getComputedStyle(t).fontSize);
+    while (t.scrollHeight > t.clientHeight + 1 && size > 14) { size -= 1; t.style.fontSize = size + "px"; }
+  });
+}
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(fitSpines);
+
+// Live details: stars, latest release, last update. The deploy workflow writes data/repos.json daily;
+// if it's missing (e.g. local preview), fall back to GitHub's public API.
+const fmt = d => new Date(d).toLocaleDateString("en-US",{month:"short",year:"numeric"});
+async function loadRepos(){
+  try { const r = await fetch("data/repos.json",{cache:"no-cache"}); if (r.ok) return await r.json(); } catch(e){}
+  try { const r = await fetch("https://api.github.com/users/Joshspeakman/repos?per_page=100"); if (r.ok) return await r.json(); } catch(e){}
+  return null;
+}
+loadRepos().then(data => {
+  if (!data) return;
+  const repos = Array.isArray(data) ? data : data.repos;
+  const by = Object.fromEntries(repos.map(r => [r.name.toLowerCase(), r]));
+  document.querySelectorAll(".live[data-repo]").forEach(el => {
+    const r = by[el.dataset.repo.toLowerCase()];
+    if (!r) return;
+    const bits = [];
+    if (r.release && r.release.tag) bits.push(`Latest: ${r.release.tag}`);
+    if (r.stargazers_count) bits.push(`${r.stargazers_count} star${r.stargazers_count===1?"":"s"}`);
+    bits.push(`Updated ${fmt(r.pushed_at)}`);
+    el.textContent = bits.join(", ");
+  });
+  if (data.generated) document.getElementById("built").textContent = `This page refreshes from GitHub every day. Last refresh: ${new Date(data.generated).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}.`;
+});
+</script>
+</body>
+</html>
