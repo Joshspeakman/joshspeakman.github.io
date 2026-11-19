@@ -229,7 +229,15 @@ section{margin-top:140px}
 .rcard h3{font-weight:600;font-size:1.34rem;line-height:1.2;letter-spacing:-.02em;margin:0}
 .rcard .orig{color:var(--muted);font-size:.86rem;margin:3px 0 12px}
 .rcard p{margin:0 0 16px;font-size:.96rem;max-width:36em;color:var(--soft)}
-.rcard .facts{margin:0 0 18px}
+/* the tag row may run on under the status pill, which only occupies the first line */
+.rcard .facts{margin:0 -76px 18px 0}
+/* what makes it a native port: these tags stand out from the plain platform chips */
+/* platforms start their own line under the tags */
+.facts li.br{flex-basis:100%;height:0;padding:0;border:0;margin-top:-6px}
+.facts li.tag{color:var(--text);border-color:rgba(140,158,255,.4);background:rgba(140,158,255,.1)}
+.facts li.tag::before{content:"";display:inline-block;width:.78em;height:.78em;margin-right:6px;vertical-align:-.08em;background:var(--accent);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 8.500 3.200 3.200L13 4.500' fill='none' stroke='%23000' stroke-width='2.200'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 8.500 3.200 3.200L13 4.500' fill='none' stroke='%23000' stroke-width='2.200'/%3E%3C/svg%3E") center/contain no-repeat}
 .rcard .state{align-self:start;margin-top:3px;font:500 .72rem/1 var(--mono);letter-spacing:.01em;padding:6px 10px;border-radius:999px;white-space:nowrap;color:var(--accent);border:1px solid rgba(140,158,255,.34);background:rgba(140,158,255,.09)}
 .rcard .state::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:7px;vertical-align:.12em}
 .rcard .links{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;font-size:.92rem}
@@ -317,6 +325,7 @@ dialog.lb[open]::backdrop{animation:fade var(--mid) var(--ease)}
   .rcard{grid-template-columns:44px minmax(0,1fr);gap:0 14px}
   .rcard .state{grid-column:2;grid-row:1;justify-self:start;margin:0 0 12px}
   .rcard .main{grid-column:2}
+  .rcard .facts{margin-right:0}
   .list li{grid-template-columns:1fr;gap:8px}
   footer{margin-top:110px;padding-top:80px}
   footer .row{margin-bottom:64px}
@@ -581,23 +590,24 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
 </dialog>
 
 <script>
-// Restoration projects, oldest original first.
+// Restoration projects, oldest original first. Every one is a native Apple Silicon app with its own launch window.
+// gfx: what the Mac app draws with (leave out if not Metal). drag: true when the release is a drag-and-drop app.
 const PORTS = [
   {repo:"OpenPark", title:"Theme Park", year:"1994", by:"Bullfrog", status:"Beta 1.4", plats:["macOS","Windows and Linux next"],
    blurb:"The DOS original, recompiled with a native host. No DOSBox. Adds widescreen, zoom and extras from other editions."},
-  {repo:"delta-force-macos", title:"Delta Force 1 & 2", year:"1998", by:"NovaLogic", status:"Beta 1", plats:["macOS","Linux"],
+  {repo:"delta-force-macos", gfx:"Metal", title:"Delta Force 1 & 2", year:"1998", by:"NovaLogic", status:"Beta 1", plats:["macOS","Linux"],
    blurb:"Both games from your Steam copies, with Metal on the Mac and OpenGL on Linux running the same recompiled code."},
-  {repo:"rainbow-six-macos", title:"Rainbow Six", year:"1998", by:"Red Storm", status:"Multiplayer in alpha", plats:["macOS","Linux"],
+  {repo:"rainbow-six-macos", gfx:"Metal", title:"Rainbow Six", year:"1998", by:"Red Storm", status:"Multiplayer in alpha", plats:["macOS","Linux"],
    blurb:"The GOG 1.04 release. Single player runs; the game's own LAN co-op, Mac and Linux players together, is in alpha testing."},
-  {repo:"sims-legacy-macos", title:"The Sims", year:"2000", by:"Maxis", status:"Beta 1", plats:["macOS"],
+  {repo:"sims-legacy-macos", gfx:"Vulkan on Metal", title:"The Sims", year:"2000", by:"Maxis", status:"Beta 1", plats:["macOS"],
    blurb:"The 2025 Legacy Collection. The game draws with Vulkan, and the app runs that Vulkan directly on Metal."},
-  {repo:"diablo-2-macos", title:"Diablo II", year:"2000", by:"Blizzard North", status:"Beta 4", plats:["macOS"],
+  {repo:"diablo-2-macos", gfx:"Metal", drag:true, title:"Diablo II", year:"2000", by:"Blizzard North", status:"Beta 4", plats:["macOS"],
    blurb:"Diablo II and Lord of Destruction 1.14d. Drop your game folder on the app and it builds itself, with the original Glide renderer on Metal."},
-  {repo:"dungeon-siege-macos", title:"Dungeon Siege", year:"2002", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
+  {repo:"dungeon-siege-macos", gfx:"Metal", drag:true, title:"Dungeon Siege", year:"2002", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
    blurb:"The full campaign, Legends of Aranna, multiplayer with Windows players and native EAX environmental audio."},
-  {repo:"sims-2-macos", title:"The Sims 2", year:"2004", by:"Maxis", status:"Beta 1", plats:["macOS"],
+  {repo:"sims-2-macos", gfx:"Metal", title:"The Sims 2", year:"2004", by:"Maxis", status:"Beta 1", plats:["macOS"],
    blurb:"The Legacy Collection from Steam on Metal. Your game folder is only read; nothing is written to it."},
-  {repo:"dungeon-siege-2-macos", title:"Dungeon Siege II", year:"2005", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
+  {repo:"dungeon-siege-2-macos", gfx:"Metal", drag:true, title:"Dungeon Siege II", year:"2005", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
    blurb:"The GOG 2.3 release at 120 fps with LAN multiplayer and EAX audio. Builds on your Mac in about six minutes."}
 ];
 
@@ -653,7 +663,7 @@ for (const p of PORTS) {
       <h3>${esc(p.title)}</h3>
       <p class="orig">${esc(p.by)}, ${p.year}</p>
       <p>${esc(p.blurb)}</p>
-      <ul class="facts">${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+      <ul class="facts">${["Native Apple Silicon", p.gfx, p.drag && "Drag-and-drop installer", "Custom launcher"].filter(Boolean).map(x=>`<li class="tag">${esc(x)}</li>`).join("")}${p.drag ? "" : "<li>Terminal installer</li>"}<li class="br" aria-hidden="true"></li>${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
       <div class="links"><a class="go" href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a><a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>
     </div>
     <span class="state">${esc(p.status)}</span>`;
