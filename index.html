@@ -10,298 +10,575 @@
 <meta property="og:image" content="https://joshspeakman.github.io/assets/img/og.jpg">
 <meta property="og:url" content="https://joshspeakman.github.io/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0F1E4A">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230F1E4A'/%3E%3Crect x='6' y='7' width='5' height='18' fill='%23F5C518'/%3E%3Crect x='13' y='10' width='5' height='15' fill='%23EDEBE3'/%3E%3Crect x='20' y='5' width='6' height='20' fill='%238FA3D9'/%3E%3C/svg%3E">
-<link rel="preload" href="assets/fonts/big-shoulders.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#07080B">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307080B'/%3E%3Cpath d='M18.500 8v10.500a4.500 4.500 0 0 1-9 0' fill='none' stroke='%23F2F3F5' stroke-width='3.400' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='22' r='2.200' fill='%238C9EFF'/%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<script>/* reveals need JS; if any script fails, show everything */document.documentElement.classList.add("js");addEventListener("error",function(e){if(!e.target||e.target===window)document.documentElement.classList.remove("js")})</script>
 <style>
-@font-face{font-family:"Big Shoulders Display";src:url(assets/fonts/big-shoulders.woff2) format("woff2");font-weight:100 900;font-display:swap}
 @font-face{font-family:"Archivo";src:url(assets/fonts/archivo.woff2) format("woff2");font-weight:100 900;font-display:swap}
+
+/* ---------- tokens ---------- */
 :root{
-  --navy:#0F1E4A; --deep:#0A1433; --panel:#14265A; --paper:#EDEBE3; --muted:#9AA6C6;
-  --yellow:#F5C518; --line:rgba(237,235,227,.14);
-  --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
-  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --wrap:1180px;
+  --bg:#07080B; --text:#F2F3F5; --soft:#B4B8C5; --muted:#868B9B; --faint:#555A6A;
+  --line:rgba(255,255,255,.085); --line-2:rgba(255,255,255,.18);
+  --accent:#8C9EFF;
+  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --wrap:1200px; --gut:32px; --bar:60px; --rail:290px;
+  --r:14px; --r-sm:9px;
+  /* one set of curves and speeds for the whole page */
+  --ease:cubic-bezier(.2,.8,.2,1); --out:cubic-bezier(.16,1,.3,1);
+  --fast:.16s; --mid:.3s; --slow:.8s;
 }
+
+/* ---------- base ---------- */
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
-body{margin:0;background:var(--navy);color:var(--paper);font:400 1.0625rem/1.6 var(--body);-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--bar) + 28px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+body{position:relative;margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+/* still backdrop behind the hero: two soft lights and a fine dot grid that fades out */
+body::before{content:"";position:absolute;inset:0 0 auto 0;height:1100px;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(900px 560px at 84% -6%,rgba(110,128,255,.3),transparent 68%),
+    radial-gradient(760px 480px at 6% -10%,rgba(124,92,255,.17),transparent 70%)}
+body::after{content:"";position:absolute;inset:0 0 auto 0;height:900px;z-index:-1;pointer-events:none;
+  background:radial-gradient(rgba(255,255,255,.075) 1px,transparent 1.500px) 0 0/30px 30px;
+  -webkit-mask-image:radial-gradient(80% 70% at 70% 20%,#000,transparent 75%);mask-image:radial-gradient(80% 70% at 70% 20%,#000,transparent 75%)}
 a{color:inherit}
 img{max-width:100%;height:auto;display:block}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
-.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
-.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:16px;background:var(--yellow);color:var(--deep);padding:8px 12px;z-index:9}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+::selection{background:var(--accent);color:var(--bg)}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:16px;background:var(--text);color:var(--bg);padding:8px 14px;border-radius:999px;z-index:99}
 
-/* top bar */
-.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
-.mark{font:800 1.35rem/1 var(--display);letter-spacing:.02em;text-decoration:none}
-.top nav{display:flex;gap:22px;font-size:.95rem}
-.top nav a{text-decoration:none;color:var(--muted)}
-.top nav a:hover{color:var(--paper)}
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:30;height:var(--bar);animation:fade .8s var(--ease) both}
+.top::before{content:"";position:absolute;inset:0;background:rgba(7,8,11,.96);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid var(--line);opacity:0;transition:opacity var(--mid) var(--ease)}
+.top.stuck::before{opacity:1}
+.top .progress{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--accent);transform:scaleX(var(--p,0));transform-origin:0 50%;opacity:0;transition:opacity var(--mid) var(--ease)}
+.top.stuck .progress{opacity:1}
+.bar{position:relative;display:flex;justify-content:space-between;align-items:center;gap:16px;height:100%}
+.mark{flex:none;font-weight:650;font-size:1.02rem;letter-spacing:-.015em;text-decoration:none;white-space:nowrap}
+.mark i{display:inline-block;width:7px;height:7px;margin-left:3px;border-radius:50%;background:var(--accent)}
+.top nav{position:relative;display:flex;gap:2px;padding:5px;margin-right:-17px;font-size:.9rem;font-weight:500;overflow-x:auto;scrollbar-width:none}
+.top nav::-webkit-scrollbar{display:none}
+.top nav a{position:relative;z-index:1;flex:none;text-decoration:none;color:var(--muted);padding:6px 12px;border-radius:999px;outline-offset:0;transition:color var(--fast) var(--ease)}
+.top nav a:hover,.top nav a.on{color:var(--text)}
+.top nav a svg{width:.7em;height:.7em;margin-left:5px;vertical-align:.02em}
+.top nav .ind{position:absolute;left:0;top:50%;height:32px;margin-top:-16px;width:var(--w,40px);border-radius:999px;pointer-events:none;
+  background:rgba(255,255,255,.075);box-shadow:inset 0 0 0 1px var(--line);
+  transform:translateX(var(--x,0px));opacity:0;
+  transition:transform var(--mid) var(--out),width var(--mid) var(--out),opacity var(--fast) var(--ease)}
+.top nav.has .ind{opacity:1}
 
-/* hero */
-.hero{padding:34px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:56px;align-items:end}
-.hero h1{font:900 clamp(4.2rem,10.5vw,9rem)/.82 var(--display);margin:0;letter-spacing:-.01em;text-transform:uppercase}
-.hero .copy{padding-bottom:6px}
-.hero .lede{max-width:26em;font-size:clamp(1.12rem,1.7vw,1.32rem);line-height:1.45;margin:0 0 12px}
-.hero .sub{max-width:30em;color:var(--muted);margin:0}
-.hero .shelf-wrap{grid-column:1/-1}
-.hero>*{min-width:0}
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.16fr);gap:48px;align-items:center;padding-top:64px;padding-bottom:28px;min-height:min(760px,calc(100vh - var(--bar)))}
+.hero-copy>*{animation:up var(--slow) var(--out) both}
+.hero-copy>:nth-child(2){animation-delay:.08s}
+.hero-copy>:nth-child(3){animation-delay:.16s}
+.hero-copy>:nth-child(4){animation-delay:.24s}
+.hero h1{text-wrap:balance;font-weight:620;font-size:clamp(2.7rem,5.5vw,4.9rem);line-height:1;letter-spacing:-.045em;margin:0 0 28px;padding-bottom:.08em;
+  background:linear-gradient(180deg,#fff 35%,#A4ABC4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{max-width:27em;font-size:clamp(1.1rem,1.5vw,1.28rem);line-height:1.5;color:var(--soft);margin:0 0 12px}
+.hero .sub{max-width:31em;font-size:.98rem;color:var(--muted);margin:0 0 34px}
+@keyframes up{from{opacity:0;transform:translateY(20px)}}
+@keyframes fade{from{opacity:0}}
+@keyframes shot{from{opacity:0;translate:80px 46px}}
 
-/* the shelf */
-.shelf-wrap{margin-top:40px;position:relative}
-.shelf{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding:30px 4px 0;scrollbar-width:thin}
-.board{height:18px;background:linear-gradient(#2A3B70,#1A2A5C);border-top:2px solid #3A4E8A;box-shadow:0 14px 30px rgba(0,0,0,.35)}
-.spine{flex:0 1 auto;min-width:62px;position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:center;
-  text-decoration:none;color:var(--fg,#fff);background:var(--bg);width:var(--w,78px);height:var(--h,300px);
-  padding:14px 0 12px;border-radius:3px 3px 0 0;
-  box-shadow:inset 6px 0 0 rgba(255,255,255,.08),inset -8px 0 0 rgba(0,0,0,.22);
-  transition:transform .25s cubic-bezier(.2,.8,.2,1)}
-.spine:hover,.spine:focus-visible{transform:translateY(-22px)}
-.spine .t{writing-mode:vertical-rl;font:800 var(--fs,2.4rem)/1 var(--display);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;flex:1 1 auto;min-height:0;overflow:hidden;text-align:center}
-.spine .rule{width:60%;height:3px;background:currentColor;opacity:.35;margin:8px 0}
-.spine .y{font:700 .78rem/1 var(--body);opacity:.75}
-.spine .st{position:absolute;top:-12px;right:-8px;background:var(--yellow);color:var(--deep);font:700 .68rem/1 var(--body);padding:5px 7px;border-radius:999px;transform:rotate(8deg)}
-.spine.ghost{background:transparent;box-shadow:none;border:2px dashed rgba(237,235,227,.28);border-bottom:0;color:var(--muted)}
-.spine.ghost:hover,.spine.ghost:focus-visible{color:var(--yellow);border-color:var(--yellow)}
+/* selected work: three screenshots layered in depth; the pointer tilts the whole deck a little */
+.deck{position:relative;aspect-ratio:1/.76;perspective:1500px}
+.deck::before{content:"";position:absolute;inset:-8% 0 -12% -6%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(110,128,255,.3),transparent)}
+.deck-in{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(calc(-15deg + var(--ry,0deg))) rotateX(calc(7deg + var(--rx,0deg)));transition:transform .7s var(--out)}
+.shot{position:absolute;display:block;width:78%;aspect-ratio:16/10;border-radius:12px;background:#0C0E13;text-decoration:none;
+  box-shadow:0 0 0 1px var(--line-2),0 50px 90px -30px rgba(0,0,0,.9);
+  transform:translateZ(var(--z,0px));
+  transition:transform var(--slow) var(--out);
+  animation:shot 1.1s var(--out) both}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:0 0;border-radius:inherit;filter:brightness(var(--b,1));transition:filter var(--mid) var(--ease)}
+.shot.s3{left:22%;top:0;--z:-150px;--b:.5;animation-delay:.2s}
+.shot.s2{left:11%;top:17%;--z:-70px;--b:.74;animation-delay:.32s}
+.shot.s1{left:0;top:34%;--z:0px;animation-delay:.44s}
+/* the name sits as a tab above the corner, so it never covers the app's own interface */
+.shot span{position:absolute;left:8px;bottom:calc(100% + 8px);white-space:nowrap;font-size:.78rem;font-weight:600;letter-spacing:-.005em;color:var(--text);padding:5px 11px;border-radius:999px;
+  background:rgba(7,8,11,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 0 0 1px var(--line-2)}
+.shot:focus-visible{--b:1}
+@media (hover:hover){
+  .shot:hover{--b:1;transform:translateZ(calc(var(--z,0px) + 34px))}
+}
 
-/* sections */
-section{padding:110px 0 0}
-.h2{font:800 clamp(2.4rem,5vw,3.6rem)/.95 var(--display);text-transform:uppercase;margin:0 0 14px;letter-spacing:.005em}
-.intro{max-width:38em;color:var(--muted);margin:0 0 40px}
-
-
-.facts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
-.facts li{font-size:.82rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--paper)}
-.facts li.status{background:var(--yellow);color:var(--deep);border-color:var(--yellow);font-weight:700}
+/* ---------- buttons, chips, links ---------- */
 .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.btn{display:inline-block;text-decoration:none;font-weight:700;font-size:.95rem;padding:10px 16px;border-radius:6px;background:var(--yellow);color:var(--deep)}
-.btn:hover{background:#FFD84A}
-.btn.ghost{background:transparent;color:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line)}
-.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--paper)}
-.live{font-size:.85rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:600;font-size:.94rem;letter-spacing:-.005em;padding:11px 20px;border-radius:999px;background:var(--text);color:var(--bg);
+  transition:transform var(--fast) var(--ease),background-color var(--fast) var(--ease),box-shadow var(--mid) var(--ease)}
+.btn:hover{background:#fff;box-shadow:0 10px 30px -10px rgba(140,158,255,.6)}
+.btn:active{transform:scale(.97);box-shadow:none}
+.btn.ghost{background:rgba(255,255,255,.04);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-2)}
+.btn.ghost:hover{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+/* small arrow that nudges forward on hover */
+.go::after,.btn::after{content:"";flex:none;display:inline-block;width:.8em;height:.8em;margin-left:7px;vertical-align:-.05em;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8h11M8.500 3.500 13 8l-4.500 4.500' fill='none' stroke='%23000' stroke-width='1.900'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8h11M8.500 3.500 13 8l-4.500 4.500' fill='none' stroke='%23000' stroke-width='1.900'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:transform var(--fast) var(--ease)}
+.btn::after{margin-left:0}
+.go:hover::after,.btn:hover::after,.proj:hover .go.main::after,.list li:hover .go::after{transform:translateX(4px)}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px;padding:0;list-style:none}
+.facts li{font:500 .72rem/1 var(--mono);letter-spacing:.01em;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--soft);white-space:nowrap}
+/* always its own line with its height reserved, so nothing moves when the data arrives */
+.live{flex:1 0 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;min-height:22px;font:400 .74rem/1.5 var(--mono);color:var(--muted);opacity:0;transition:opacity var(--slow) var(--ease)}
+.live.ready{opacity:1}
+.live .tag{font-weight:500;color:var(--soft)}
+.live span + span::before,.live .tag + span::before{content:"";display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--faint);margin-right:10px;vertical-align:middle}
 
-/* feature game */
-.feature{margin-top:8px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:44px;align-items:center}
-.feature + .grid{margin-top:48px}
-.feature .shots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.feature .shots img{border-radius:6px}
-.feature .shots img:first-child{grid-column:1/-1}
-.feature .logo{max-width:330px;margin:0 0 18px}
-.feature p{max-width:32em}
-
-/* project rows */
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;margin-top:20px}
-.proj{grid-column:span 4;background:var(--panel);border-radius:10px;padding:24px;display:flex;flex-direction:column}
-.proj.half{grid-column:span 6}
-.proj.wide{grid-column:span 8;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:center}
-.proj h3{font:800 1.9rem/1 var(--display);text-transform:uppercase;margin:0 0 10px}
-.proj p{margin:0 0 16px;color:#CBD2E6;font-size:.98rem}
-.proj .meta{margin-top:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:.88rem}
-.proj .meta a{color:var(--yellow);text-decoration:none;font-weight:700}
-.proj .meta a:hover{text-decoration:underline}
-.proj img.icon{width:56px;height:56px;margin-bottom:14px}
-.proj img.wordmark{height:38px;width:auto;margin-bottom:14px}
-.proj img.shot{border-radius:6px}
-
-/* web components: quieter list */
-.list{list-style:none;margin:20px 0 0;padding:0;border-top:1px solid var(--line)}
-.list li{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) auto;gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
-.list a.n{font-weight:700;text-decoration:none}
-.list a.n:hover{color:var(--yellow)}
-.list span{color:var(--muted)}
-.list .stack{font-size:.85rem;color:var(--muted);white-space:nowrap}
-
-
-footer{margin-top:120px;background:var(--deep);padding:56px 0 40px}
-footer .big{font:900 clamp(2.4rem,6vw,4.2rem)/.9 var(--display);text-transform:uppercase;margin:0 0 22px}
-footer .row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px}
-footer small{color:var(--muted);display:block}
-
-@media (max-width:900px){
-  .feature{grid-template-columns:1fr;gap:24px}
-  .proj,.proj.wide,.proj.half{grid-column:1/-1}
-  .proj.wide{grid-template-columns:1fr}
-  .list li{grid-template-columns:1fr;gap:4px}
-  .top nav{display:none}
-  .hero{grid-template-columns:1fr}
-  .hero .copy{margin-top:24px}
-  section{padding-top:84px}
+/* screenshots open larger */
+.zoom{position:relative;z-index:2;display:block;overflow:hidden;border-radius:var(--r-sm);cursor:zoom-in;background:#0C0E13;box-shadow:0 0 0 1px var(--line)}
+.zoom img{width:100%;height:100%;object-fit:cover;transition:transform var(--slow) var(--out)}
+.zoom::after{content:"";position:absolute;right:10px;bottom:10px;width:30px;height:30px;border-radius:50%;
+  background:rgba(7,8,11,.8) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M9.500 2.500h4v4M6.500 13.500h-4v-4M13.500 2.500 9 7M2.500 13.500 7 9' fill='none' stroke='%23F2F3F5' stroke-width='1.500'/%3E%3C/svg%3E") center/13px no-repeat;
+  box-shadow:inset 0 0 0 1px var(--line-2);opacity:0;transform:scale(.85);transition:opacity var(--fast) var(--ease),transform var(--mid) var(--out)}
+.zoom:focus-visible img{transform:scale(1.04)}
+.zoom:focus-visible::after{opacity:1;transform:none}
+@media (hover:hover){
+  .zoom:hover img{transform:scale(1.04)}
+  .zoom:hover::after{opacity:1;transform:none}
 }
 
-/* added: category stickers, restoration grid */
-.spine .st.cat-app{background:#8FD3FF}
-.spine .st.cat-game{background:var(--yellow)}
-.spine .st.cat-rest{background:#F2A7C3}
-.spine .st.cat-web{background:#B7F0A1}
-.legend{display:flex;flex-wrap:wrap;gap:16px;color:var(--muted);font-size:.88rem;margin:14px 0 0}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline}
-.shots2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 34px}
+/* ---------- sections: a heading rail that stays put while the work scrolls past ---------- */
+section{margin-top:140px}
+#apps{margin-top:72px}
+.sec{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:72px;padding-top:44px;position:relative}
+.sec::before{content:"";position:absolute;left:var(--gut);right:var(--gut);top:0;height:1px;background:var(--line)}
+.rail{position:sticky;top:calc(var(--bar) + 44px);align-self:start}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 18px;font:500 .74rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.eyebrow b{font-weight:500;color:var(--accent)}
+.eyebrow b::after{content:"";display:inline-block;width:22px;height:1px;background:var(--line-2);margin-left:10px;vertical-align:middle}
+.h2{text-wrap:balance;font-weight:600;font-size:clamp(1.9rem,3vw,2.5rem);line-height:1.06;letter-spacing:-.035em;margin:0 0 16px}
+.intro{color:var(--muted);font-size:.98rem;margin:0}
+
+/* shared card: hairline panel with a light that follows the pointer */
+.proj,.feature{position:relative;isolation:isolate;border:1px solid var(--line);border-radius:var(--r);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.014));box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  --tx:transform var(--fast) var(--ease),border-color var(--mid) var(--ease),box-shadow var(--mid) var(--ease)}
+/* pointer light. Its transparent bottom border is a hit area that grows on hover, so a lifted card keeps its hover at the bottom edge */
+.proj::after,.feature::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;border:0 solid transparent;background-clip:padding-box;
+  background-image:radial-gradient(460px circle at var(--mx,50%) var(--my,0%),rgba(140,158,255,.13),transparent 62%);opacity:0;transition:opacity var(--mid) var(--ease)}
+@media (hover:hover){
+  .proj:hover{transform:translateY(-3px);border-color:var(--line-2);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 50px -28px rgba(0,0,0,.9)}
+  .proj:hover::after{bottom:-5px;border-bottom-width:5px}
+  .feature:hover{border-color:var(--line-2)}
+  .proj:hover::after,.feature:hover::after{opacity:1}
+}
+.proj:target,.feature:target{border-color:rgba(140,158,255,.6);box-shadow:0 0 0 4px rgba(140,158,255,.1)}
+
+/* everything that moves on reveal or hover shares this transition list */
+[data-reveal],.proj,.feature{transition:opacity var(--slow) var(--out) var(--rd,0s),translate var(--slow) var(--out) var(--rd,0s),var(--tx,visibility 0s)}
+
+/* ---------- apps + games ---------- */
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.proj{grid-column:span 3;padding:26px 26px 22px;display:flex;flex-direction:column}
+.proj.third{grid-column:span 2;padding:22px 22px 18px}
+.proj.third h3{font-size:1.14rem}
+.proj.third p{font-size:.92rem;margin-bottom:18px}
+.proj.wide{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:30px;align-items:center;padding:28px}
+.proj.wide>div{display:flex;flex-direction:column;height:100%}
+.proj h3{font-weight:600;font-size:1.28rem;line-height:1.2;letter-spacing:-.02em;margin:0 0 10px}
+.proj p{margin:0 0 22px;color:var(--soft);font-size:.96rem}
+.proj .meta{margin-top:auto;display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;font-size:.92rem}
+.proj .meta a{color:var(--text);text-decoration:none;font-weight:600;position:relative;z-index:2;transition:color var(--fast) var(--ease)}
+.proj:hover .meta a.main,.proj .meta a:hover{color:var(--accent)}
+/* cards with one destination are clickable all over */
+.proj .meta a.main{position:static}
+.proj .meta a.main::before{content:"";position:absolute;inset:0;z-index:1}
+.proj img.icon{width:52px;height:52px;margin-bottom:18px;border-radius:12px;box-shadow:0 0 0 1px var(--line-2)}
+.proj img.wordmark{height:34px;width:auto;margin-bottom:18px;align-self:flex-start}
+.proj.wide .zoom{box-shadow:0 0 0 1px var(--line-2),0 30px 60px -30px rgba(0,0,0,.9)}
+/* a second wide card mirrors the first; a picture with its own transparent surround needs no frame */
+.proj.wide.flip{grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr)}
+.proj.wide.flip .zoom{order:-1}
+.proj.wide .zoom.bare{background:none;box-shadow:none;overflow:visible}
+.proj.wide .zoom.bare::after{right:6%;bottom:8%}
+
+/* ---------- feature game ---------- */
+.feature{padding:14px;margin-bottom:16px;border-radius:18px}
+.feature .shots{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:10px}
+.feature .shots .zoom:first-child{grid-row:1/-1}
+.feature .shots .zoom{aspect-ratio:16/10}
+.feature .shots .zoom:not(:first-child){aspect-ratio:auto}
+.feature .info{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 34px;align-items:start;padding:26px 14px 14px}
+.feature .logo{width:100%;border-radius:6px}
+.feature p{color:var(--soft);font-size:.98rem;margin:0 0 18px}
+
+/* ---------- restoration ---------- */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;list-style:none;margin:0 0 44px;padding:0;counter-reset:s}
+.how li{position:relative;counter-increment:s;color:var(--muted);font-size:.93rem;padding-top:18px;border-top:1px solid var(--line)}
+.how li::before{content:"0" counter(s);display:block;font:500 .74rem/1 var(--mono);letter-spacing:.08em;color:var(--accent);margin-bottom:14px}
+.how strong{display:block;color:var(--text);font-weight:600;font-size:1.02rem;letter-spacing:-.01em;margin-bottom:4px}
+.shots2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 44px}
 .shots2 figure{margin:0}
-.shots2 img{border-radius:6px;aspect-ratio:16/9;object-fit:cover;width:100%}
-.shots2 figcaption{font-size:.82rem;color:var(--muted);margin-top:6px}
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;list-style:none;margin:0 0 40px;padding:0;counter-reset:s}
-.how li{counter-increment:s;color:var(--muted);font-size:.95rem;padding-top:14px;border-top:1px solid var(--line)}
-.how li::before{content:counter(s);font:900 1.6rem/1 var(--display);color:var(--yellow);margin-right:10px}
-.how strong{color:var(--paper);font-weight:700}
-.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;border-top:1px solid var(--line)}
-.rcard{padding:24px 0;border-bottom:1px solid var(--line);scroll-margin-top:24px}
-.rcard:target{background:linear-gradient(90deg,rgba(245,197,24,.08),transparent 80%)}
-.rcard h3{font:800 1.9rem/1 var(--display);text-transform:uppercase;margin:0}
-.rcard .orig{color:var(--muted);font-size:.9rem;margin:4px 0 10px}
-.rcard p{margin:0 0 12px;font-size:.98rem;max-width:34em}
-.rcard .facts{margin-bottom:12px}
-.rcard .links{display:flex;flex-wrap:wrap;gap:16px;align-items:baseline;font-size:.92rem}
-.rcard .links a{color:var(--yellow);font-weight:700;text-decoration:none}
-.rcard .links a:hover{text-decoration:underline}
-.proj{scroll-margin-top:24px}
-.proj:target,.feature:target{outline:2px solid var(--yellow);outline-offset:6px}
-@media (max-width:900px){
-  .rgrid,.shots2,.how{grid-template-columns:1fr}
-  .how li{margin-bottom:12px}
+.shots2 .zoom{aspect-ratio:16/9;border-radius:var(--r)}
+.shots2 figcaption{font:400 .74rem/1.5 var(--mono);color:var(--muted);margin-top:10px}
+.rgrid{border-top:1px solid var(--line)}
+.rcard{position:relative;isolation:isolate;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:0 22px;padding:28px 0 24px;border-bottom:1px solid var(--line)}
+/* the row lights up edge to edge, a little wider than the text */
+.rcard::before,.list li::before{content:"";position:absolute;z-index:-1;inset:0 -20px;border-radius:12px;background:rgba(255,255,255,.035);opacity:0;transition:opacity var(--mid) var(--ease)}
+.rcard:target::before,.list li:target::before{opacity:1;box-shadow:inset 0 0 0 1px rgba(140,158,255,.5)}
+@media (hover:hover){.rcard:hover::before,.list li:hover::before{opacity:1}}
+.rcard .yr{font:500 .8rem/1 var(--mono);color:var(--muted);padding-top:.5em;transition:color var(--mid) var(--ease)}
+.rcard:hover .yr,.rcard:target .yr{color:var(--accent)}
+.rcard h3{font-weight:600;font-size:1.34rem;line-height:1.2;letter-spacing:-.02em;margin:0}
+.rcard .orig{color:var(--muted);font-size:.86rem;margin:3px 0 12px}
+.rcard p{margin:0 0 16px;font-size:.96rem;max-width:36em;color:var(--soft)}
+.rcard .facts{margin:0 0 18px}
+.rcard .state{align-self:start;margin-top:3px;font:500 .72rem/1 var(--mono);letter-spacing:.01em;padding:6px 10px;border-radius:999px;white-space:nowrap;color:var(--accent);border:1px solid rgba(140,158,255,.34);background:rgba(140,158,255,.09)}
+.rcard .state::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:7px;vertical-align:.12em}
+.rcard .links{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;font-size:.92rem}
+.rcard .links a{color:var(--text);font-weight:600;text-decoration:none;transition:color var(--fast) var(--ease)}
+.rcard .links a + a{color:var(--muted);font-weight:500}
+.rcard .links a:hover{color:var(--accent)}
+.rcard .links .live{margin-top:6px}
+
+/* ---------- web list ---------- */
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.list li{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,13.500rem) minmax(0,1fr) auto;gap:22px;padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.list a.n{font-weight:600;letter-spacing:-.01em;text-decoration:none;transition:color var(--fast) var(--ease)}
+.list a.n::before{content:"";position:absolute;inset:0 -20px}
+.list li:hover a.n,.list li:target a.n{color:var(--accent)}
+.list span{color:var(--muted);font-size:.96rem}
+.list .stack{display:flex;gap:6px;align-items:flex-start;align-self:center}
+.list .stack i{font:500 .7rem/1 var(--mono);font-style:normal;letter-spacing:.02em;padding:5px 8px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+
+/* ---------- footer ---------- */
+footer{position:relative;margin-top:160px;border-top:1px solid var(--line);padding:110px 0 40px;overflow:hidden;isolation:isolate}
+footer::before{content:"";position:absolute;z-index:-1;left:50%;bottom:-420px;width:1100px;height:720px;margin-left:-550px;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(110,128,255,.22),transparent)}
+footer .big{text-wrap:balance;font-weight:620;font-size:clamp(2.3rem,5.4vw,4.3rem);line-height:1.02;letter-spacing:-.045em;margin:0 0 34px;max-width:11em;padding-bottom:.08em;
+  background:linear-gradient(180deg,#fff 35%,#A4ABC4);-webkit-background-clip:text;background-clip:text;color:transparent}
+footer .row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:96px}
+footer .fine{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px 40px;align-items:start;padding-top:26px;border-top:1px solid var(--line)}
+footer small{color:var(--muted);font-size:.84rem;display:block;max-width:56em}
+footer small + small{margin-top:4px}
+#built{min-height:1.6em}
+footer .totop{font-size:.88rem;font-weight:500;text-decoration:none;color:var(--muted);white-space:nowrap;transition:color var(--fast) var(--ease)}
+footer .totop:hover{color:var(--text)}
+footer .totop::after{transform:rotate(-90deg)}
+footer .totop:hover::after{transform:rotate(-90deg) translateX(4px)}
+
+/* ---------- lightbox ---------- */
+dialog.lb{border:0;padding:0;margin:auto;background:transparent;color:var(--text);max-width:min(94vw,1500px);max-height:94vh;overflow:visible}
+dialog.lb::backdrop{background:rgba(4,5,8,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+dialog.lb[open]{animation:pop var(--mid) var(--out)}
+dialog.lb[open]::backdrop{animation:fade var(--mid) var(--ease)}
+@keyframes pop{from{opacity:0;transform:scale(.965)}}
+.lb figure{margin:0}
+.lb img{max-width:100%;max-height:82vh;width:auto;margin:0 auto;border-radius:10px;box-shadow:0 0 0 1px var(--line-2),0 40px 100px rgba(0,0,0,.7)}
+.lb .capbar{display:flex;align-items:center;gap:12px;margin-top:14px;font-size:.9rem;color:var(--soft)}
+.lb .cap{flex:1 1 auto;min-width:0}
+.lb .n{font:400 .76rem/1 var(--mono);color:var(--muted);white-space:nowrap;margin-right:4px}
+.lb button{flex:none;width:36px;height:36px;border-radius:50%;border:0;box-shadow:inset 0 0 0 1px var(--line-2);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;display:grid;place-items:center;padding:0;
+  transition:background-color var(--fast) var(--ease),color var(--fast) var(--ease),transform var(--fast) var(--ease)}
+.lb button:hover{background:var(--text);color:var(--bg)}
+.lb button:active{transform:scale(.94)}
+.lb button svg{width:14px;height:14px}
+
+/* ---------- scroll reveals (only with JS, only when motion is welcome) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  html.js [data-reveal]{opacity:0;translate:0 22px}
+  html.js [data-reveal].in{opacity:1;translate:0 0}
+  html.js .sec::before{scale:0 1;transform-origin:0 50%;transition:scale 1.2s var(--out)}
+  html.js .sec:has(.in)::before{scale:1 1}
 }
+@media print{html.js [data-reveal]{opacity:1!important;translate:none!important}html.js .sec::before{scale:none!important}.top{position:static}}
+
+/* ---------- smaller screens ---------- */
+@media (max-width:1180px){
+  .sec{grid-template-columns:1fr;gap:36px}
+  .rail{position:static;max-width:38em}
+}
+@media (max-width:1040px){
+  .hero{grid-template-columns:1fr;gap:54px;padding-top:56px;min-height:0}
+  .deck{max-width:640px}
+  .deck::before{inset:-8% 0 -12% 0}
+}
+@media (max-width:760px){
+  :root{--gut:20px}
+  section{margin-top:104px}
+  .grid{grid-template-columns:1fr}
+  .proj,.proj.third{grid-column:1/-1}
+  .proj.wide,.proj.wide.flip{grid-template-columns:1fr;padding:24px}
+  .proj.wide.flip .zoom{order:0}
+  .feature .shots{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .feature .shots .zoom:first-child{grid-row:auto;grid-column:1/-1}
+  .feature .shots .zoom:not(:first-child){aspect-ratio:16/10}
+  .feature .info{grid-template-columns:1fr;padding:22px 8px 10px}
+  .feature .logo{max-width:240px;margin-bottom:10px}
+  .how,.shots2{grid-template-columns:1fr}
+  .how{gap:22px}
+  .rcard{grid-template-columns:44px minmax(0,1fr);gap:0 14px}
+  .rcard .state{grid-column:2;grid-row:1;justify-self:start;margin:0 0 12px}
+  .rcard .main{grid-column:2}
+  .list li{grid-template-columns:1fr;gap:8px}
+  footer{margin-top:110px;padding-top:80px}
+  footer .row{margin-bottom:64px}
+  footer .fine{grid-template-columns:1fr}
+  .deck-in{transform:rotateY(-10deg) rotateX(5deg)}
+}
+@media (max-width:640px){
+  .top nav{margin-right:calc(var(--gut)*-1);padding-right:22px;padding-left:14px;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 30px),transparent)}
+  .bar{gap:4px}
+}
+@media (max-width:380px){
+  .top nav{font-size:.84rem}
+  .top nav a{padding:6px 8px}
+  .top nav a svg{display:none}
+}
+
+/* ---------- the four choices under the hero: pick one and the page shows only that group ---------- */
+html[data-show="apps"] main section:not([data-track="apps"]),
+html[data-show="web"] main section:not([data-track="web"]),
+html[data-show="restoration"] main section:not([data-track="restoration"]),
+html[data-show="games"] main section:not([data-track="games"]){display:none}
+
+.more{display:none;margin-top:120px;padding-top:40px;position:relative}
+.more::before{content:"";position:absolute;left:var(--gut);right:var(--gut);top:0;height:1px;background:var(--line)}
+html[data-show]:not([data-show="all"]) .more{display:block}
+html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-go="web"],html[data-show="restoration"] .more [data-go="restoration"],html[data-show="games"] .more [data-go="games"]{display:none}
+
+.gate-a{min-height:0;padding-top:44px;padding-bottom:0;row-gap:44px;grid-template-columns:minmax(0,1fr) minmax(0,.92fr)}
+.gate-a .sub{margin-bottom:0}
+.gate-a .deck{width:100%;max-width:540px;justify-self:end;margin-top:26px}
+.choices{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;animation:up var(--slow) var(--out) .34s both}
+.choices .eyebrow{grid-column:1/-1;margin:0 0 2px}
+.choices .eyebrow b::after{display:none}
+.choice{position:relative;isolation:isolate;display:flex;flex-direction:column;padding:20px 20px 18px;text-decoration:none;border:1px solid var(--line);border-radius:var(--r);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.018));box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform var(--fast) var(--ease),border-color var(--mid) var(--ease),box-shadow var(--mid) var(--ease)}
+.choice::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;border:0 solid transparent;background-clip:padding-box;
+  background-image:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(140,158,255,.16),transparent 62%);opacity:0;transition:opacity var(--mid) var(--ease)}
+.choice .k{display:flex;justify-content:space-between;align-items:center;font:500 .74rem/1 var(--mono);letter-spacing:.08em;color:var(--accent)}
+.choice .k .go{color:var(--muted);transition:color var(--fast) var(--ease)}
+.choice strong{font-weight:600;font-size:1.42rem;line-height:1.1;letter-spacing:-.035em;margin:14px 0 8px}
+.choice .d{color:var(--muted);font-size:.9rem;line-height:1.5}
+.choice .c{margin-top:auto;padding-top:14px;font:400 .72rem/1.4 var(--mono);color:var(--soft)}
+.choice.sel{border-color:rgba(140,158,255,.7);box-shadow:0 0 0 4px rgba(140,158,255,.1)}
+@media (hover:hover){
+  .choice:hover{transform:translateY(-3px);border-color:rgba(140,158,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 50px -28px rgba(0,0,0,.9)}
+  .choice:hover::after{opacity:1;bottom:-5px;border-bottom-width:5px}
+  .choice:hover .k .go{color:var(--text)}
+  .choice:hover .go::after{transform:translateX(4px)}
+}
+@media (max-width:1040px){.gate-a{grid-template-columns:1fr}.gate-a .deck{justify-self:start}.choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.choices{gap:10px}.choice{padding:16px 16px 14px}.choice strong{font-size:1.2rem;margin:10px 0 6px}.choice .d{display:none}.choice .c{padding-top:4px}.gate-a .deck{order:3}.choices{order:2}}
 </style>
 </head>
 <body>
 <a class="skip" href="#apps">Skip to the work</a>
-<div class="wrap">
-  <header class="top">
-    <a class="mark" href="#">JS</a>
-    <nav aria-label="Sections">
-      <a href="#apps">Apps</a>
-      <a href="#games">Games</a>
-      <a href="#restoration">Restoration</a>
-      <a href="#web">Web</a>
-      <a href="https://github.com/Joshspeakman">GitHub</a>
+
+<header class="top" id="top">
+  <div class="wrap bar">
+    <a class="mark" href="#" aria-label="Josh Speakman, back to top">Josh Speakman<i aria-hidden="true"></i></a>
+    <nav aria-label="Sections" id="nav">
+      <a href="#apps" data-go="apps">Apps</a>
+      <a href="#web" data-go="web">Web</a>
+      <a href="#restoration" data-go="restoration">Restoration</a>
+      <a href="#games" data-go="games">Games</a>
+      <a href="#apps" data-go="all">Everything</a>
+      <a href="https://github.com/Joshspeakman">GitHub<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.500h7.500V9M10.500 1.500 1.500 10.500" fill="none" stroke="currentColor" stroke-width="1.600"/></svg></a>
+      <span class="ind" aria-hidden="true"></span>
     </nav>
-  </header>
+  </div>
+  <span class="progress" aria-hidden="true"></span>
+</header>
 
-  <main>
-    <div class="hero">
-      <h1>Josh<br>Speakman</h1>
-      <div class="copy">
-        <p class="lede">I build apps, websites and games. I also love bringing old PC games back to life so they run properly on today's machines.</p>
-        <p class="sub">By day I'm a web engineer building WordPress sites and plugins. Everything else here is stuff I make because I want it to exist.</p>
-      </div>
-
-      <div class="shelf-wrap">
-        <div class="shelf" id="shelf" aria-label="Things I've made"></div>
-        <div class="board" aria-hidden="true"></div>
-        <p class="legend"><span><i style="background:#8FD3FF"></i>App</span><span><i style="background:#F5C518"></i>Game</span><span><i style="background:#F2A7C3"></i>Restoration</span><span><i style="background:#B7F0A1"></i>Web</span><span>Pick a box to jump to it.</span></p>
+<main>
+  <div class="wrap hero gate-a" id="hero">
+    <div class="hero-copy">
+      <h1><span class="vh">Josh Speakman. </span>I build apps, websites and games.</h1>
+      <p class="lede">I also love bringing old PC games back to life so they run properly on today's machines.</p>
+      <p class="sub">By day I'm a web engineer building WordPress sites and plugins. Everything else here is stuff I make because I want it to exist.</p>
+    </div>
+    <div class="deck">
+      <div class="deck-in">
+        <a class="shot s3" href="#port-OpenPark"><img src="assets/img/openpark.webp" alt="" width="1280" height="722"><span>Theme Park</span></a>
+        <a class="shot s2" href="#driftwave"><img src="assets/img/driftwave.webp" alt="" width="1400" height="825"><span>Driftwave</span></a>
+        <a class="shot s1" href="#dotfound"><img src="assets/img/dotfound.webp" alt="" width="1400" height="788"><span>dotFound</span></a>
       </div>
     </div>
+    <nav class="choices" aria-label="Choose what to see">
+      <p class="eyebrow"><b>&rarr;</b>Where do you want to start?</p>
+      <a class="choice" href="#apps" data-go="apps"><span class="k">01<i class="go"></i></span><strong>Apps</strong><span class="d">Desktop apps and utilities, mostly built to scratch my own itch.</span><span class="c">5 apps and utilities</span></a>
+      <a class="choice" href="#web" data-go="web"><span class="k">02<i class="go"></i></span><strong>Web work</strong><span class="d">WordPress sites and plugins are my day job. These are the pieces I've open-sourced.</span><span class="c">4 open-source pieces</span></a>
+      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c">8 native ports</span></a>
+      <a class="choice" href="#games" data-go="games"><span class="k">04<i class="go"></i></span><strong>Games</strong><span class="d">Games I've made myself, from a co-op railroad to a terminal duck.</span><span class="c">3 games</span></a>
+    </nav>
+  </div>
 
-    <section id="apps" aria-labelledby="apps-h">
-      <h2 class="h2" id="apps-h">Apps and tools</h2>
-      <p class="intro">Desktop apps and utilities, mostly built to scratch my own itch.</p>
+  <section id="apps" data-track="apps" aria-labelledby="apps-h">
+    <div class="wrap sec">
+      <div class="rail" data-reveal>
+        <p class="eyebrow" aria-hidden="true"><b>01</b>Apps</p>
+        <h2 class="h2" id="apps-h">Apps and tools</h2>
+        <p class="intro">Desktop apps and utilities, mostly built to scratch my own itch.</p>
+      </div>
       <div class="grid">
-        <article class="proj wide" id="dotfound">
+        <article class="proj wide" id="dotfound" data-reveal>
           <div>
-            <img class="icon" src="assets/img/dotfound-icon.webp" alt="" width="56" height="56">
+            <img class="icon" src="assets/img/dotfound-icon.webp" alt="" width="128" height="128">
             <h3>dotFound</h3>
             <p>A fast game launcher that finds every game on your PC, from Steam, GOG, Epic, Xbox and Battle.net to loose installers and portable folders, then puts them all on one shelf with real artwork.</p>
-            <div class="meta"><a href="https://github.com/Joshspeakman/dotfound/releases/latest">Download the alpha</a><span class="live" data-repo="dotfound"></span></div>
+            <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/dotfound/releases/latest">Download the beta</a><span class="live" data-repo="dotfound"></span></div>
           </div>
-          <img class="shot" src="assets/img/dotfound.webp" alt="dotFound's cover flow view of a game library" width="1400" height="788" loading="lazy">
+          <a class="zoom" href="assets/img/dotfound.webp"><img src="assets/img/dotfound.webp" alt="dotFound in Cover flow: Half-Life, with its artwork, description and play time" width="1400" height="788" loading="lazy"></a>
         </article>
-        <article class="proj" id="driftwave">
-          <img class="wordmark" src="assets/img/driftwave-logo.webp" alt="Driftwave" width="741" height="160">
-          <p>Internet radio player, now being rebuilt from scratch in Rust for Windows, macOS and Linux, with a full library view and a compact late-90s style player.</p>
-          <div class="meta"><a href="https://github.com/Joshspeakman/driftwave">Follow the rebuild</a><span class="live" data-repo="driftwave"></span></div>
+        <article class="proj wide flip" id="driftwave" data-reveal>
+          <div>
+            <img class="wordmark" src="assets/img/driftwave-logo.webp" alt="Driftwave" width="741" height="160">
+            <p>Internet radio player, now being rebuilt from scratch in Rust for Windows, macOS and Linux, with a full library view and a compact late-90s style player.</p>
+            <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/driftwave">Follow the rebuild</a><span class="live" data-repo="driftwave"></span></div>
+          </div>
+          <a class="zoom bare" href="assets/img/driftwave.webp"><img src="assets/img/driftwave.webp" alt="Driftwave: the Full layout in the Night Market theme, with the Classic player over it" width="1400" height="825" loading="lazy"></a>
         </article>
-        <article class="proj" id="rom-cleanup">
+        <article class="proj third" id="rom-cleanup" data-reveal>
           <h3>ROM Cleanup</h3>
           <p>Python organizer for ROM collections: finds duplicates, prefers the right region and format, and sorts the rest.</p>
-          <div class="meta"><a href="https://github.com/Joshspeakman/Rom-Cleanup">View source</a><span class="live" data-repo="Rom-Cleanup"></span></div>
+          <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/Rom-Cleanup">View source</a><span class="live" data-repo="Rom-Cleanup"></span></div>
         </article>
-        <article class="proj" id="invoice-pro">
+        <article class="proj third" id="invoice-pro" data-reveal>
           <h3>Invoice Pro</h3>
           <p>A client-side invoice generator. Fill it in, print or save it, and nothing leaves your browser.</p>
-          <div class="meta"><a href="https://github.com/Joshspeakman/Invoice-Pro">View source</a><span class="live" data-repo="Invoice-Pro"></span></div>
+          <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/Invoice-Pro">View source</a><span class="live" data-repo="Invoice-Pro"></span></div>
         </article>
-        <article class="proj" id="ebay">
+        <article class="proj third" id="ebay" data-reveal>
           <h3>eBay Resale Analyzer</h3>
           <p>Snap a photo of an item while sourcing and get its sold count, active listings and a price to list it at.</p>
-          <div class="meta"><a href="https://github.com/Joshspeakman/ebay-resale-analyzer">View source</a><span class="live" data-repo="ebay-resale-analyzer"></span></div>
+          <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/ebay-resale-analyzer">View source</a><span class="live" data-repo="ebay-resale-analyzer"></span></div>
         </article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="games" aria-labelledby="games-h">
-      <h2 class="h2" id="games-h">Games I made</h2>
-      <div class="feature" id="dead-west-railway">
-        <div class="shots">
-          <img src="assets/img/dwr-departure.webp" alt="Dead West Railway: the posse at a frontier rail station" width="1400" height="875" loading="lazy">
-          <img src="assets/img/dwr-posse.webp" alt="Driving the steam train across the desert" width="1400" height="875" loading="lazy">
-          <img src="assets/img/dwr-night.webp" alt="The railroad at night" width="1400" height="875" loading="lazy">
+  <section id="web" data-track="web" aria-labelledby="web-h">
+    <div class="wrap sec">
+      <div class="rail" data-reveal>
+        <p class="eyebrow" aria-hidden="true"><b>02</b>Web</p>
+        <h2 class="h2" id="web-h">Web work</h2>
+        <p class="intro">Building and maintaining websites is my day job, mostly WordPress sites, custom plugins and the hosting and DNS behind them. These are a few pieces I've open-sourced along the way.</p>
+      </div>
+      <ul class="list">
+        <li id="testimonial-slider" data-reveal><a class="n go" href="https://github.com/Joshspeakman/advanced-testimonial-slider">Testimonial slider</a><span>WordPress plugin with video popups, background images and mobile swipe.</span><span class="stack"><i>PHP</i><i>JS</i></span></li>
+        <li data-reveal><a class="n go" href="https://github.com/Joshspeakman/YouTube-Video-Player-with-Custom-Controls">YouTube player</a><span>A YouTube embed with your own controls instead of YouTube's.</span><span class="stack"><i>HTML</i><i>JS</i></span></li>
+        <li data-reveal><a class="n go" href="https://github.com/Joshspeakman/Seamless-Hero-Video-Background">Hero video background</a><span>Full-bleed looping YouTube video behind a hero section, with no visible player chrome.</span><span class="stack"><i>HTML</i><i>CSS</i><i>JS</i></span></li>
+        <li data-reveal><a class="n go" href="https://github.com/Joshspeakman/Responsive-Image-Carousel">Image carousel</a><span>A small, responsive image carousel in vanilla JavaScript.</span><span class="stack"><i>HTML</i><i>JS</i></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="restoration" data-track="restoration" aria-labelledby="rest-h">
+    <div class="wrap sec">
+      <div class="rail" data-reveal>
+        <p class="eyebrow" aria-hidden="true"><b>03</b>Restoration</p>
+        <h2 class="h2" id="rest-h">Game restoration</h2>
+        <p class="intro">I grew up on these games and I want them to keep working. My current approach takes a game's original Windows or DOS code and rebuilds it as a native app, so it runs on a modern Mac without Wine, Rosetta or an emulator. You bring your own copy; none of the game is in my repos.</p>
+      </div>
+      <div>
+        <ol class="how">
+          <li data-reveal><strong>Check your copy.</strong> The installer confirms it's the exact build supported and only reads from your folder.</li>
+          <li data-reveal><strong>Translate the code.</strong> The original x86 executable is recompiled into C, ahead of time.</li>
+          <li data-reveal><strong>Build the app.</strong> That C is compiled for arm64 and linked to a runtime that swaps Windows and DirectX for Metal and Core Audio.</li>
+        </ol>
+        <div class="shots2">
+          <figure data-reveal><a class="zoom" href="assets/img/openpark.webp"><img src="assets/img/openpark.webp" alt="Theme Park running natively on a Mac: a park in full swing, in widescreen" width="1280" height="722" loading="lazy"></a><figcaption>Theme Park, running natively.</figcaption></figure>
+          <figure data-reveal><a class="zoom" href="assets/img/sims2.webp"><img src="assets/img/sims2.webp" alt="The Sims 2 neighborhood view running natively on a Mac" width="1298" height="795" loading="lazy"></a><figcaption>The Sims 2, running natively.</figcaption></figure>
         </div>
-        <div>
-          <img class="logo" src="assets/img/dwr-logo.webp" alt="Dead West Railway" width="1220" height="420">
-          <p>A co-op survival game on a haunted frontier railroad for one to six players. Keep the boiler fed, scavenge supplies and look out for each other. Play online, over your own network, two to a screen with a controller, or alone offline.</p>
-          <ul class="facts"><li>Windows</li><li>macOS</li><li>Linux</li><li>Browser</li></ul>
-          <div class="actions">
-            <a class="btn" href="https://github.com/Joshspeakman/dead-west-railway/releases">Download the game</a>
-            <a class="btn ghost" href="https://dead-west-railway.fly.dev">Play in your browser</a>
-            <span class="live" data-repo="dead-west-railway"></span>
+        <div class="rgrid" id="port-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="games" data-track="games" aria-labelledby="games-h">
+    <div class="wrap sec">
+      <div class="rail" data-reveal>
+        <p class="eyebrow" aria-hidden="true"><b>04</b>Games</p>
+        <h2 class="h2" id="games-h">Games I made</h2>
+      </div>
+      <div>
+        <div class="feature" id="dead-west-railway" data-reveal>
+          <div class="shots">
+            <a class="zoom" href="assets/img/dwr-departure.webp"><img src="assets/img/dwr-departure.webp" alt="Dead West Railway: three riders in the street of the first town, their locomotive waiting at the depot" width="1400" height="875" loading="lazy"></a>
+            <a class="zoom" href="assets/img/dwr-posse.webp"><img src="assets/img/dwr-posse.webp" alt="The train under way across the desert with its riders aboard, and a fight beside the track" width="1400" height="875" loading="lazy"></a>
+            <a class="zoom" href="assets/img/dwr-night.webp"><img src="assets/img/dwr-night.webp" alt="The locomotive by lamplight on a rainy night, coming up to a camp" width="1400" height="875" loading="lazy"></a>
+          </div>
+          <div class="info">
+            <img class="logo" src="assets/img/dwr-logo.webp" alt="Dead West Railway" width="1220" height="420">
+            <div>
+              <p>A co-op survival game on a haunted frontier railroad for one to six players. Keep the boiler fed, scavenge supplies and look out for each other. Play online, over your own network, two to a screen with a controller, or alone offline.</p>
+              <ul class="facts"><li>Windows</li><li>macOS</li><li>Linux</li><li>Browser</li></ul>
+              <div class="actions">
+                <a class="btn" href="https://github.com/Joshspeakman/dead-west-railway/releases">Download the game</a>
+                <a class="btn ghost" href="https://dead-west-railway.fly.dev">Play in your browser</a>
+                <span class="live" data-repo="dead-west-railway"></span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="grid">
-        <article class="proj half" id="bananageddon">
-          <h3>Bananageddon</h3>
-          <p>Rooftop banana artillery inspired by QBasic Gorillas, rebuilt as an online multiplayer browser game with a 16-bit look. The server owns the physics and the match; the client draws it.</p>
-          <div class="meta"><a href="https://github.com/Joshspeakman/Bananageddon">View source</a><span class="live" data-repo="Bananageddon"></span></div>
-        </article>
-        <article class="proj half" id="cheese">
-          <h3>Cheese the Duck</h3>
-          <p>A terminal virtual pet. Cheese has moods, a diary, trust issues and a complicated relationship with bread. Tamagotchi by way of Seaman.</p>
-          <div class="meta"><a href="https://github.com/Joshspeakman/cheese-the-duck">Install it</a><span class="live" data-repo="cheese-the-duck"></span></div>
-        </article>
+        <div class="grid">
+          <article class="proj half" id="bananageddon" data-reveal>
+            <h3>Bananageddon</h3>
+            <p>Rooftop banana artillery inspired by QBasic Gorillas, rebuilt as an online multiplayer browser game with a 16-bit look. The server owns the physics and the match; the client draws it.</p>
+            <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/Bananageddon">View source</a><span class="live" data-repo="Bananageddon"></span></div>
+          </article>
+          <article class="proj half" id="cheese" data-reveal>
+            <h3>Cheese the Duck</h3>
+            <p>A terminal virtual pet. Cheese has moods, a diary, trust issues and a complicated relationship with bread. Tamagotchi by way of Seaman.</p>
+            <div class="meta"><a class="go main" href="https://github.com/Joshspeakman/cheese-the-duck">Install it</a><span class="live" data-repo="cheese-the-duck"></span></div>
+          </article>
+        </div>
       </div>
-    </section>
-
-    <section id="restoration" aria-labelledby="rest-h">
-      <h2 class="h2" id="rest-h">Game restoration</h2>
-      <p class="intro">I grew up on these games and I want them to keep working. My current approach takes a game's original Windows or DOS code and rebuilds it as a native app, so it runs on a modern Mac without Wine, Rosetta or an emulator. You bring your own copy; none of the game is in my repos.</p>
-      <ol class="how">
-        <li><strong>Check your copy.</strong> The installer confirms it's the exact build supported and only reads from your folder.</li>
-        <li><strong>Translate the code.</strong> The original x86 executable is recompiled into C, ahead of time.</li>
-        <li><strong>Build the app.</strong> That C is compiled for arm64 and linked to a runtime that swaps Windows and DirectX for Metal and Core Audio.</li>
-      </ol>
-      <div class="shots2">
-        <figure><img src="assets/img/openpark.webp" alt="Theme Park running natively on a Mac" width="1280" height="722" loading="lazy"><figcaption>Theme Park, running natively.</figcaption></figure>
-        <figure><img src="assets/img/sims2.webp" alt="The Sims 2 neighborhood view running natively on a Mac" width="1298" height="795" loading="lazy"><figcaption>The Sims 2, running natively.</figcaption></figure>
-      </div>
-      <div class="rgrid" id="port-list"></div>
-    </section>
-
-    <section id="web" aria-labelledby="web-h">
-      <h2 class="h2" id="web-h">Web work</h2>
-      <p class="intro">Building and maintaining websites is my day job, mostly WordPress sites, custom plugins and the hosting and DNS behind them. These are a few pieces I've open-sourced along the way.</p>
-      <ul class="list">
-        <li id="testimonial-slider"><a class="n" href="https://github.com/Joshspeakman/advanced-testimonial-slider">Testimonial slider</a><span>WordPress plugin with video popups, background images and mobile swipe.</span><span class="stack">PHP, JS</span></li>
-        <li><a class="n" href="https://github.com/Joshspeakman/YouTube-Video-Player-with-Custom-Controls">YouTube player</a><span>A YouTube embed with your own controls instead of YouTube's.</span><span class="stack">HTML, JS</span></li>
-        <li><a class="n" href="https://github.com/Joshspeakman/Seamless-Hero-Video-Background">Hero video background</a><span>Full-bleed looping YouTube video behind a hero section, with no visible player chrome.</span><span class="stack">HTML, CSS, JS</span></li>
-        <li><a class="n" href="https://github.com/Joshspeakman/Responsive-Image-Carousel">Image carousel</a><span>A small, responsive image carousel in vanilla JavaScript.</span><span class="stack">HTML, JS</span></li>
-      </ul>
-    </section>
-  </main>
-</div>
+    </div>
+  </section>
+  <div class="wrap more">
+    <p class="eyebrow" aria-hidden="true"><b>+</b>Keep going</p>
+    <div class="actions">
+      <a class="btn ghost" href="#apps" data-go="apps">Apps</a>
+      <a class="btn ghost" href="#web" data-go="web">Web work</a>
+      <a class="btn ghost" href="#restoration" data-go="restoration">Restoration</a>
+      <a class="btn ghost" href="#games" data-go="games">Games</a>
+      <a class="btn ghost" href="#apps" data-go="all">Everything</a>
+    </div>
+  </div>
+</main>
 
 <footer id="next">
   <div class="wrap">
-    <p class="big">Got a bug, a question or an idea?</p>
-    <div class="row">
+    <p class="big" data-reveal>Got a bug, a question or an idea?</p>
+    <div class="row" data-reveal>
       <a class="btn" href="https://github.com/Joshspeakman">Find me on GitHub</a>
       <a class="btn ghost" href="https://ko-fi.com/speakerjosh">Buy me a coffee on Ko-fi</a>
     </div>
-    <small>Open an issue on any repo and I'll see it. Game names belong to their publishers; my restoration projects don't include any of their files.</small>
-    <small id="built"></small>
+    <div class="fine">
+      <a class="mark" href="#" aria-label="Josh Speakman, back to top">Josh Speakman<i aria-hidden="true"></i></a>
+      <div>
+        <small>Open an issue on any repo and I'll see it. Game names belong to their publishers; my restoration projects don't include any of their files.</small>
+        <small id="built"></small>
+      </div>
+      <a class="totop go" href="#">Back to top</a>
+    </div>
   </div>
 </footer>
+
+<dialog class="lb" id="lb" aria-label="Screenshot">
+  <figure>
+    <img alt="">
+    <figcaption class="capbar">
+      <span class="cap"></span><span class="n"></span>
+      <button type="button" class="prev" aria-label="Previous screenshot"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.800"/></svg></button>
+      <button type="button" class="next" aria-label="Next screenshot"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.800"/></svg></button>
+      <button type="button" class="x" aria-label="Close" autofocus><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.500 3.500 9 9m0-9-9 9" fill="none" stroke="currentColor" stroke-width="1.800"/></svg></button>
+    </figcaption>
+  </figure>
+</dialog>
 
 <script>
 // Restoration projects, oldest original first.
@@ -324,63 +601,171 @@ const PORTS = [
    blurb:"The GOG 2.3 release at 120 fps with LAN multiplayer and EAX audio. Builds on your Mac in about six minutes."}
 ];
 
-// The shelf: a mix of everything, styled like boxed software.
-const CAT = {app:["cat-app","App"], game:["cat-game","Game"], rest:["cat-rest","Restored"], web:["cat-web","Web"]};
-const SHELF = [
-  {t:"Dead West Railway", cat:"game", href:"#dead-west-railway", bg:"#7A2E14", fg:"#F3C97A", h:380, w:104, foot:"JS"},
-  {t:"dotFound", cat:"app", href:"#dotfound", bg:"#1F2A3C", fg:"#F5A524", h:300, w:96, foot:"JS"},
-  {t:"Diablo II", cat:"rest", href:"#port-diablo-2-macos", bg:"#5E1210", fg:"#E9D9B8", h:390, w:100, foot:"2000"},
-  {t:"Driftwave", cat:"app", href:"#driftwave", bg:"#D9573F", fg:"#FFF4E8", h:320, w:94, foot:"JS"},
-  {t:"Dungeon Siege", cat:"rest", href:"#port-dungeon-siege-macos", bg:"#24452B", fg:"#E6D7A6", h:360, w:104, foot:"2002"},
-  {t:"Bananageddon", cat:"game", href:"#bananageddon", bg:"#F2D33A", fg:"#3B2A0A", h:290, w:96, foot:"JS"},
-  {t:"The Sims 2", cat:"rest", href:"#port-sims-2-macos", bg:"#3E9B3A", fg:"#FFFFFF", h:340, w:100, foot:"2004"},
-  {t:"Testimonial Slider", cat:"web", href:"#testimonial-slider", bg:"#2D6E7E", fg:"#E8F7F5", h:310, w:90, foot:"WP"},
-  {t:"Theme Park", cat:"rest", href:"#port-OpenPark", bg:"#5B2A86", fg:"#FFD84A", h:300, w:98, foot:"1994"},
-  {t:"Cheese the Duck", cat:"game", href:"#cheese", bg:"#F1E6C4", fg:"#3A3326", h:330, w:92, foot:"JS"}
-];
-
-const shelf = document.getElementById("shelf");
-const list = document.getElementById("port-list");
+const root = document.documentElement;
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const list = $("#port-list");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const calm = matchMedia("(prefers-reduced-motion:reduce)");
 
-for (const b of SHELF) {
-  const a = document.createElement("a");
-  a.className = "spine";
-  a.href = b.href;
-  a.style.cssText = `--bg:${b.bg};--fg:${b.fg};--h:${b.h}px;--w:${b.w}px`;
-  a.setAttribute("aria-label", `${b.t}, ${CAT[b.cat][1]}`);
-  a.innerHTML = `<span class="st ${CAT[b.cat][0]}">${CAT[b.cat][1]}</span><span class="t">${esc(b.t)}</span><span class="rule" aria-hidden="true"></span><span class="y">${esc(b.foot)}</span>`;
-  shelf.appendChild(a);
+// ---------- the four choices under the hero: four groups, one filter (also ?show=apps and so on) ----------
+let show = "all";
+const GROUPS = ['apps', 'web', 'restoration', 'games'];
+function trackOf(el){ const s = el.closest("section[data-track]"); return s ? s.dataset.track : null; }
+function setShow(t){
+  show = GROUPS.includes(t) ? t : "all";
+  root.dataset.show = show;
+  $$("[data-go]").forEach(a => a.classList.toggle("sel", show !== "all" && a.dataset.go === show));
+  try { history.replaceState(null, "", (show === "all" ? location.pathname : "?show=" + show) + location.hash); } catch (e) {}
 }
-const ghost = document.createElement("a");
-ghost.className = "spine ghost";
-ghost.href = "#next";
-ghost.style.cssText = "--h:280px;--w:92px";
-ghost.innerHTML = '<span class="t">What\'s next?</span><span class="rule" aria-hidden="true"></span><span class="y">Ideas</span>';
-ghost.setAttribute("aria-label", "Send me an idea");
-shelf.appendChild(ghost);
+// a deep link to a card outside the chosen group shows everything again, so it can never land on a hidden card
+function ensureVisible(t){
+  const k = trackOf(t);
+  if (show === "all" || !k || k === show) return;
+  setShow("all");
+  setTimeout(() => { settle(t.id); t.scrollIntoView({block: "start"}); onScroll(); }, 0);
+}
+function pickNav(line){
+  if (show !== "all") return $(`#nav [data-go="${show}"]`);
+  let cur = null;
+  $$("main section[data-track]").forEach(s => { if (s.getBoundingClientRect().top <= line) cur = s.dataset.track; });
+  if ($("#next").getBoundingClientRect().top <= line) cur = null;
+  return cur ? $(`#nav [data-go="${cur}"]`) : null;
+}
+addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("[data-go]");
+  if (!a || e.metaKey || e.ctrlKey) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (err) {}
+  setShow(a.dataset.go);
+  queue();
+  document.getElementById(GROUPS.includes(a.dataset.go) ? a.dataset.go : GROUPS[0]).scrollIntoView({behavior: calm.matches ? "auto" : "smooth", block: "start"});
+}, true);
+
 
 for (const p of PORTS) {
   const el = document.createElement("article");
   el.className = "rcard";
   el.id = "port-" + p.repo;
-  el.innerHTML = `<h3>${esc(p.title)}</h3>
-    <p class="orig">${esc(p.by)}, ${p.year}</p>
-    <p>${esc(p.blurb)}</p>
-    <ul class="facts"><li class="status">${esc(p.status)}</li>${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
-    <div class="links"><a href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a><a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>`;
+  el.setAttribute("data-reveal", "");
+  el.innerHTML = `<span class="yr" aria-hidden="true">${esc(p.year)}</span>
+    <div class="main">
+      <h3>${esc(p.title)}</h3>
+      <p class="orig">${esc(p.by)}, ${p.year}</p>
+      <p>${esc(p.blurb)}</p>
+      <ul class="facts">${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+      <div class="links"><a class="go" href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a><a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>
+    </div>
+    <span class="state">${esc(p.status)}</span>`;
   list.appendChild(el);
 }
 
-// Shrink each spine title until it fits the box, the way a real spine is typeset.
-function fitSpines(){
-  document.querySelectorAll(".spine .t").forEach(t => {
-    t.style.fontSize = "";
-    let size = parseFloat(getComputedStyle(t).fontSize);
-    while (t.scrollHeight > t.clientHeight + 1 && size > 14) { size -= 1; t.style.fontSize = size + "px"; }
-  });
+// Scroll reveals. Anything already above the viewport shows at once; things arriving together stagger.
+try {
+  const io = new IntersectionObserver(entries => {
+    let n = 0;
+    for (const e of entries) {
+      if (!e.isIntersecting && e.boundingClientRect.bottom > 0) continue;
+      if (e.isIntersecting) e.target.style.setProperty("--rd", Math.min(n++ * 70, 420) + "ms");
+      e.target.classList.add("in");
+      io.unobserve(e.target);
+    }
+  }, {rootMargin:"0px 0px -7% 0px", threshold:.06});
+  $$("[data-reveal]").forEach(el => io.observe(el));
+} catch (e) { root.classList.remove("js"); }
+
+// A card you jump to must already be in its final place, or the jump lands short by the reveal offset.
+function settle(id){
+  const t = id && document.getElementById(id);
+  if (t) ensureVisible(t);
+  if (!t || !t.hasAttribute("data-reveal") || t.classList.contains("in")) return;
+  t.style.transition = "none";
+  t.classList.add("in");
+  t.offsetWidth;
+  t.style.transition = "";
 }
-(document.fonts ? document.fonts.ready : Promise.resolve()).then(fitSpines);
+addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest('a[href^="#"]');
+  if (a) settle(a.getAttribute("href").slice(1));
+});
+addEventListener("hashchange", () => settle(location.hash.slice(1)));
+settle(location.hash.slice(1));
+
+// Top bar: solid once you scroll, and the pill follows the section in view.
+const topbar = $("#top"), nav = $("#nav");
+const links = $$('a[href^="#"]', nav);
+const sections = links.map(a => document.getElementById(a.getAttribute("href").slice(1)));
+let active = null, ticking = false;
+function setActive(a){
+  if (a === active) return;
+  if (active) { active.classList.remove("on"); active.removeAttribute("aria-current"); }
+  active = a;
+  nav.classList.toggle("has", !!a);
+  if (!a) return;
+  a.classList.add("on");
+  a.setAttribute("aria-current", "true");
+  placePill();
+  const off = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
+  if (nav.scrollWidth > nav.clientWidth) nav.scrollTo({left: off, behavior: "smooth"});
+}
+function placePill(){
+  if (!active) return;
+  nav.style.setProperty("--x", active.offsetLeft + "px");
+  nav.style.setProperty("--w", active.offsetWidth + "px");
+}
+function onScroll(){
+  ticking = false;
+  const y = scrollY, max = root.scrollHeight - innerHeight;
+  topbar.classList.toggle("stuck", y > 8);
+  topbar.style.setProperty("--p", max > 0 ? Math.min(1, y / max).toFixed(4) : 0);
+  const line = innerHeight * .42;
+  setActive(pickNav(line));
+}
+const queue = () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } };
+addEventListener("scroll", queue, {passive:true});
+addEventListener("resize", () => { queue(); placePill(); });
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(placePill);
+onScroll();
+
+// A soft light under the pointer on cards, and a slight tilt of the hero screenshots toward it.
+const hero = $("#hero"), deck = $(".deck-in");
+addEventListener("pointermove", e => {
+  if (e.pointerType === "touch") return;
+  const c = e.target.closest && e.target.closest(".proj,.feature,.choice,.panel");
+  if (c) {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty("--mx", (e.clientX - r.left) + "px");
+    c.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }
+  if (deck && !calm.matches && scrollY < innerHeight) {
+    const r = hero.getBoundingClientRect();
+    const dx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+    const dy = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+    deck.style.setProperty("--ry", (dx * 5).toFixed(2) + "deg");
+    deck.style.setProperty("--rx", (dy * -4).toFixed(2) + "deg");
+  }
+}, {passive:true});
+
+// Screenshots open in a lightbox. Without it, the links just open the image.
+const lb = $("#lb"), zooms = $$("a.zoom");
+if (lb.showModal) {
+  const img = $("img", lb), cap = $(".cap", lb), count = $(".n", lb);
+  let at = 0;
+  const show = i => {
+    at = (i + zooms.length) % zooms.length;
+    const src = $("img", zooms[at]);
+    img.src = zooms[at].href; img.alt = src.alt;
+    img.width = src.getAttribute("width"); img.height = src.getAttribute("height");
+    cap.textContent = src.alt;
+    count.textContent = `${at + 1} / ${zooms.length}`;
+  };
+  zooms.forEach((a, i) => a.addEventListener("click", e => { e.preventDefault(); show(i); lb.showModal(); }));
+  $(".prev", lb).addEventListener("click", () => show(at - 1));
+  $(".next", lb).addEventListener("click", () => show(at + 1));
+  $(".x", lb).addEventListener("click", () => lb.close());
+  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+  lb.addEventListener("keydown", e => { if (e.key === "ArrowRight") show(at + 1); else if (e.key === "ArrowLeft") show(at - 1); });
+}
 
 // Live details: stars, latest release, last update. The deploy workflow writes data/repos.json daily;
 // if it's missing (e.g. local preview), fall back to GitHub's public API.
@@ -394,17 +779,21 @@ loadRepos().then(data => {
   if (!data) return;
   const repos = Array.isArray(data) ? data : data.repos;
   const by = Object.fromEntries(repos.map(r => [r.name.toLowerCase(), r]));
-  document.querySelectorAll(".live[data-repo]").forEach(el => {
+  $$(".live[data-repo]").forEach(el => {
     const r = by[el.dataset.repo.toLowerCase()];
     if (!r) return;
     const bits = [];
-    if (r.release && r.release.tag) bits.push(`Latest: ${r.release.tag}`);
-    if (r.stargazers_count) bits.push(`${r.stargazers_count} star${r.stargazers_count===1?"":"s"}`);
-    bits.push(`Updated ${fmt(r.pushed_at)}`);
-    el.textContent = bits.join(", ");
+    if (r.release && r.release.tag) bits.push(`<b class="tag">${esc(r.release.tag)}</b>`);
+    if (r.stargazers_count) bits.push(`<span>${r.stargazers_count} star${r.stargazers_count===1?"":"s"}</span>`);
+    bits.push(`<span>Updated ${fmt(r.pushed_at)}</span>`);
+    el.innerHTML = bits.join("");
+    el.classList.add("ready");
   });
-  if (data.generated) document.getElementById("built").textContent = `This page refreshes from GitHub every day. Last refresh: ${new Date(data.generated).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}.`;
+  if (data.generated) $("#built").textContent = `This page refreshes from GitHub every day. Last refresh: ${new Date(data.generated).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}.`;
 });
+setShow(new URLSearchParams(location.search).get("show") || "all");
+onScroll();
+{ const t = location.hash && document.getElementById(location.hash.slice(1)); if (t) ensureVisible(t); }
 </script>
 </body>
 </html>
