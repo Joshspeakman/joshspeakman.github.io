@@ -292,6 +292,8 @@ dialog.lb[open]::backdrop{animation:fade var(--mid) var(--ease)}
 .lb button svg{width:14px;height:14px}
 
 /* ---------- scroll reveals (only with JS, only when motion is welcome) ---------- */
+/* elements that slide in are never the scroll anchor: Firefox otherwise follows one as it slides and shifts the page */
+[data-reveal]{overflow-anchor:none}
 @media (prefers-reduced-motion:no-preference){
   html.js [data-reveal]{opacity:0;translate:0 22px}
   html.js [data-reveal].in{opacity:1;translate:0 0}
@@ -708,8 +710,7 @@ addEventListener("click", e => {
   const a = e.target.closest && e.target.closest('a[href^="#"]');
   if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
   const id = a.getAttribute("href").slice(1), t = id && document.getElementById(id), k = t && trackOf(t);
-  clearTimeout(saveT);
-  try { history.replaceState({...(history.state || {}), show, y: Math.round(scrollY)}, ""); } catch (err) {}
+  savePlace();
   if (t && show !== "all" && k && k !== show) {
     e.preventDefault();
     try { history.pushState({show: "all"}, "", location.pathname + "#" + id); } catch (err) {}
@@ -724,10 +725,9 @@ addEventListener("hashchange", () => settle(location.hash.slice(1)));
 // keeps each history entry's position in its state and restores it itself.
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 function jumpTo(y){ root.style.scrollBehavior = "auto"; scrollTo(0, y); root.style.scrollBehavior = ""; }
-addEventListener("scroll", () => {
-  clearTimeout(saveT);
-  saveT = setTimeout(() => { try { history.replaceState({...(history.state || {}), show, y: Math.round(scrollY)}, ""); } catch (e) {} }, 300);
-}, {passive:true});
+function savePlace(){ clearTimeout(saveT); try { history.replaceState({...(history.state || {}), show, y: Math.round(scrollY)}, ""); } catch (e) {} }
+addEventListener("scroll", () => { clearTimeout(saveT); saveT = setTimeout(savePlace, 300); }, {passive:true});
+addEventListener("pagehide", savePlace);   // leaving for another site: keep the place for when Back brings you here
 addEventListener("popstate", e => {
   clearTimeout(saveT);
   setShow(new URLSearchParams(location.search).get("show") || "all");
@@ -843,7 +843,22 @@ loadRepos().then(data => {
   if (data.generated) $("#built").textContent = `This page refreshes from GitHub every day. Last refresh: ${new Date(data.generated).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}.`;
 });
 setShow(new URLSearchParams(location.search).get("show") || "all");
-if (!location.hash && history.state && typeof history.state.y === "number") jumpTo(history.state.y);
+// Coming back (Back, Forward or reload): return to the stored place, even if the address has a #card in it.
+// It is applied again once fonts and images are in, unless you've started scrolling yourself by then.
+{
+  const nav = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+  const returning = nav ? nav.type === "back_forward" || nav.type === "reload" : !location.hash;
+  const y0 = history.state && history.state.y;
+  if (returning && typeof y0 === "number") {
+    let moved = false;
+    const mine = () => { moved = true; };
+    ["wheel", "touchstart", "keydown", "mousedown"].forEach(t => addEventListener(t, mine, {once: true, passive: true}));
+    const again = () => { if (!moved && Math.abs(scrollY - y0) > 1) jumpTo(y0); };
+    jumpTo(y0);
+    addEventListener("load", again, {once: true});
+    if (document.fonts) document.fonts.ready.then(again);
+  }
+}
 onScroll();
 { const t = location.hash && document.getElementById(location.hash.slice(1)); if (t) ensureVisible(t); }
 </script>
