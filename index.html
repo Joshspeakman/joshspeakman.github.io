@@ -195,7 +195,9 @@ section{margin-top:140px}
 .proj.wide .zoom{box-shadow:0 0 0 1px var(--line-2),0 30px 60px -30px rgba(0,0,0,.9)}
 /* a second wide card mirrors the first; a picture with its own transparent surround needs no frame */
 .proj.wide.flip{grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr)}
-.proj.wide.flip .zoom{order:-1}
+/* explicit placement, not order:-1: Firefox paints a reordered item under the card's full-size link, so the picture could not be clicked */
+.proj.wide.flip .zoom{grid-column:1;grid-row:1}
+.proj.wide.flip>div{grid-column:2;grid-row:1}
 .proj.wide .zoom.bare{background:none;box-shadow:none;overflow:visible}
 .proj.wide .zoom.bare::after{right:6%;bottom:8%}
 
@@ -314,7 +316,7 @@ dialog.lb[open]::backdrop{animation:fade var(--mid) var(--ease)}
   .grid{grid-template-columns:1fr}
   .proj,.proj.third{grid-column:1/-1}
   .proj.wide,.proj.wide.flip{grid-template-columns:1fr;padding:24px}
-  .proj.wide.flip .zoom{order:0}
+  .proj.wide.flip .zoom,.proj.wide.flip>div{grid-column:auto;grid-row:auto}
   .feature .shots{grid-template-columns:1fr 1fr;grid-template-rows:auto}
   .feature .shots .zoom:first-child{grid-row:auto;grid-column:1/-1}
   .feature .shots .zoom:not(:first-child){aspect-ratio:16/10}
@@ -619,15 +621,16 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 const calm = matchMedia("(prefers-reduced-motion:reduce)");
 
 // ---------- the four choices under the hero: four groups, one filter (also ?show=apps and so on) ----------
-let show = "all";
+let show = "all", saveT;   // the group on show; the timer that saves the scroll position into history
 const GROUPS = ['apps', 'web', 'restoration', 'games'];
 function trackOf(el){ const s = el.closest("section[data-track]"); return s ? s.dataset.track : null; }
 function setShow(t){
   show = GROUPS.includes(t) ? t : "all";
   root.dataset.show = show;
   $$("[data-go]").forEach(a => a.classList.toggle("sel", show !== "all" && a.dataset.go === show));
-  try { history.replaceState(null, "", (show === "all" ? location.pathname : "?show=" + show) + location.hash); } catch (e) {}
+  try { history.replaceState(history.state, "", urlFor(show) + location.hash); } catch (e) {}
 }
+function urlFor(t){ return t === "all" ? location.pathname : "?show=" + t; }
 // a deep link to a card outside the chosen group shows everything again, so it can never land on a hidden card
 function ensureVisible(t){
   const k = trackOf(t);
@@ -646,8 +649,13 @@ addEventListener("click", e => {
   const a = e.target.closest && e.target.closest("[data-go]");
   if (!a || e.metaKey || e.ctrlKey) return;
   e.preventDefault(); e.stopImmediatePropagation();
-  try { history.replaceState(null, "", location.pathname + location.search); } catch (err) {}
-  setShow(a.dataset.go);
+  const t = GROUPS.includes(a.dataset.go) ? a.dataset.go : "all";
+  // remember where this view was, then give the new view its own history entry so Back returns here
+  try {
+    history.replaceState({show, y: scrollY}, "", location.pathname + location.search + location.hash);
+    if (t !== show) history.pushState({show: t}, "", urlFor(t)); else history.replaceState({show: t}, "", urlFor(t));
+  } catch (err) {}
+  setShow(t);
   queue();
   document.getElementById(GROUPS.includes(a.dataset.go) ? a.dataset.go : GROUPS[0]).scrollIntoView({behavior: calm.matches ? "auto" : "smooth", block: "start"});
 }, true);
@@ -694,11 +702,44 @@ function settle(id){
   t.offsetWidth;
   t.style.transition = "";
 }
+// In-page links: remember where this entry was first, so Back returns there. A link to a card in a hidden
+// group shows everything again, as its own history entry. (The group choices are handled above.)
 addEventListener("click", e => {
   const a = e.target.closest && e.target.closest('a[href^="#"]');
-  if (a) settle(a.getAttribute("href").slice(1));
+  if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
+  const id = a.getAttribute("href").slice(1), t = id && document.getElementById(id), k = t && trackOf(t);
+  clearTimeout(saveT);
+  try { history.replaceState({...(history.state || {}), show, y: Math.round(scrollY)}, ""); } catch (err) {}
+  if (t && show !== "all" && k && k !== show) {
+    e.preventDefault();
+    try { history.pushState({show: "all"}, "", location.pathname + "#" + id); } catch (err) {}
+    setShow("all"); settle(id); t.scrollIntoView({block: "start"}); queue();
+    return;
+  }
+  settle(id);
 });
 addEventListener("hashchange", () => settle(location.hash.slice(1)));
+// Back, Forward and reload put the page back where it was. Browsers restore the scroll position at different
+// moments around the group change (Chrome before it, and clamps to the shorter filtered page), so the page
+// keeps each history entry's position in its state and restores it itself.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+function jumpTo(y){ root.style.scrollBehavior = "auto"; scrollTo(0, y); root.style.scrollBehavior = ""; }
+addEventListener("scroll", () => {
+  clearTimeout(saveT);
+  saveT = setTimeout(() => { try { history.replaceState({...(history.state || {}), show, y: Math.round(scrollY)}, ""); } catch (e) {} }, 300);
+}, {passive:true});
+addEventListener("popstate", e => {
+  clearTimeout(saveT);
+  setShow(new URLSearchParams(location.search).get("show") || "all");
+  const y = e.state && e.state.y, t = location.hash && document.getElementById(location.hash.slice(1));
+  requestAnimationFrame(() => {
+    if (typeof y === "number") jumpTo(y);
+    else if (t) { settle(t.id); root.style.scrollBehavior = "auto"; t.scrollIntoView({block: "start"}); root.style.scrollBehavior = ""; }
+    else jumpTo(0);
+    onScroll();
+  });
+  queue();
+});
 settle(location.hash.slice(1));
 
 // Top bar: solid once you scroll, and the pill follows the section in view.
@@ -802,6 +843,7 @@ loadRepos().then(data => {
   if (data.generated) $("#built").textContent = `This page refreshes from GitHub every day. Last refresh: ${new Date(data.generated).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}.`;
 });
 setShow(new URLSearchParams(location.search).get("show") || "all");
+if (!location.hash && history.state && typeof history.state.y === "number") jumpTo(history.state.y);
 onScroll();
 { const t = location.hash && document.getElementById(location.hash.slice(1)); if (t) ensureVisible(t); }
 </script>
