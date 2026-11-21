@@ -36,11 +36,16 @@ jobs:
           gh api "users/Joshspeakman/repos?per_page=100&type=owner" \
             --jq '[.[] | select(.fork|not) | {name, description, html_url, homepage, language, topics, stargazers_count, pushed_at}]' > /tmp/repos.json
           echo '{}' > /tmp/releases.json
+          # newest published release, prereleases included (most projects are betas); the page picks the same way
+          pick='[.[] | select((.draft|not) and .published_at != null)] | max_by(.published_at) // empty
+                | {tag: .tag_name, name, url: .html_url, published_at, prerelease}'
           for name in $(jq -r '.[].name' /tmp/repos.json); do
-            # newest published release, prereleases included (most projects are betas); the page picks the same way
-            rel=$(gh api "repos/Joshspeakman/$name/releases?per_page=10" \
-              --jq '[.[] | select((.draft|not) and .published_at != null)] | max_by(.published_at) // empty
-                    | {tag: .tag_name, name, url: .html_url, published_at, prerelease}' 2>/dev/null || true)
+            # an API error is tried once more, then fails the run: the live copy stays rather than losing a release
+            if ! rel=$(gh api "repos/Joshspeakman/$name/releases?per_page=10" --jq "$pick"); then
+              sleep 10
+              rel=$(gh api "repos/Joshspeakman/$name/releases?per_page=10" --jq "$pick") \
+                || { echo "::error::Could not read the releases of $name"; exit 1; }
+            fi
             if [ -n "$rel" ]; then
               jq --arg n "$name" --argjson r "$rel" '. + {($n): $r}' /tmp/releases.json > /tmp/r2 && mv /tmp/r2 /tmp/releases.json
             fi

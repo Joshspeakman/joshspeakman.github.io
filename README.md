@@ -14,7 +14,7 @@ Each project shows its newest release (prereleases count, drafts don't), the dat
 
 To give a card release details, add `<span class="live" data-repo="REPO"></span>`. A download link with `data-dl="REPO"` reads "Download the beta", "Download the alpha" or "Download" to match that repo's newest release.
 
-GitHub pauses scheduled workflows in a public repo after 60 days with no activity in it. The page still finds new releases on its own; to restart the refresh, push anything or enable the workflow again in the Actions tab.
+GitHub turns off scheduled workflows in a public repo after 60 days with no activity in it. The page still finds new releases on its own; to restart the refresh, enable the workflow again in the Actions tab.
 
 ## Editing
 
