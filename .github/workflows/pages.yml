@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
   schedule:
-    - cron: "17 13 * * *"   # daily, refreshes stars / releases / update dates
+    - cron: "4,19,34,49 * * * *"   # every 15 minutes: new releases, stars, update dates
   workflow_dispatch:
 
 permissions:
@@ -12,13 +12,18 @@ permissions:
   pages: write
   id-token: write
 
+# Runs queue rather than cancel. A scheduled run that finds nothing new still deploys if master
+# has moved since the live copy was built (the commit is recorded in data/repos.json), so a push
+# whose own run was dropped from the queue still goes live.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      deploy: ${{ steps.compare.outputs.deploy }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,26 +37,45 @@ jobs:
             --jq '[.[] | select(.fork|not) | {name, description, html_url, homepage, language, topics, stargazers_count, pushed_at}]' > /tmp/repos.json
           echo '{}' > /tmp/releases.json
           for name in $(jq -r '.[].name' /tmp/repos.json); do
-            rel=$(gh api "repos/Joshspeakman/$name/releases?per_page=1" --jq '.[0] // empty | {tag: .tag_name, url: .html_url, published_at}' 2>/dev/null || true)
+            # newest published release, prereleases included (most projects are betas); the page picks the same way
+            rel=$(gh api "repos/Joshspeakman/$name/releases?per_page=10" \
+              --jq '[.[] | select((.draft|not) and .published_at != null)] | max_by(.published_at) // empty
+                    | {tag: .tag_name, name, url: .html_url, published_at, prerelease}' 2>/dev/null || true)
             if [ -n "$rel" ]; then
               jq --arg n "$name" --argjson r "$rel" '. + {($n): $r}' /tmp/releases.json > /tmp/r2 && mv /tmp/r2 /tmp/releases.json
             fi
           done
-          jq --slurpfile rel /tmp/releases.json --arg now "$(date -u +%FT%TZ)" \
-            '{generated: $now, repos: [ .[] | . + {release: ($rel[0][.name] // null)} ]}' /tmp/repos.json > data/repos.json
-          jq '.repos | length' data/repos.json
+          jq --slurpfile rel /tmp/releases.json --arg now "$(date -u +%FT%TZ)" --arg commit "$GITHUB_SHA" \
+            '{generated: $now, commit: $commit, repos: [ .[] | . + {release: ($rel[0][.name] // null)} ]}' /tmp/repos.json > data/repos.json
+          jq -r '"\(.repos | length) repos, \([.repos[] | select(.release)] | length) with releases"' data/repos.json
+
+      - name: Compare with the live site
+        id: compare
+        run: |
+          set -uo pipefail
+          deploy=true
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ] \
+             && curl -fsSL --retry 2 "https://joshspeakman.github.io/data/repos.json?t=$(date +%s)" -o /tmp/live.json \
+             && [ "$(jq -S 'del(.generated)' data/repos.json)" = "$(jq -S 'del(.generated)' /tmp/live.json 2>/dev/null)" ]; then
+            deploy=false
+            echo "Nothing new since the live copy; not deploying."
+          fi
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
 
       - name: Assemble site
+        if: steps.compare.outputs.deploy == 'true'
         run: |
           mkdir -p _site
           cp -r index.html .nojekyll assets data _site/
 
       - uses: actions/upload-pages-artifact@v3
+        if: steps.compare.outputs.deploy == 'true'
         with:
           path: _site
 
   deploy:
     needs: build
+    if: needs.build.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
