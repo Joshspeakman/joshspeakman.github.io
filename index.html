@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Josh Speakman: apps, websites, games and game restoration</title>
-<meta name="description" content="Developer building apps, websites and games, and rebuilding classic PC games as native Mac apps: Diablo II, Dungeon Siege, The Sims, Delta Force, Rainbow Six and Theme Park.">
+<meta name="description" content="Developer building apps, websites and games, and rebuilding classic PC games as native Mac apps: Resident Evil, Dino Crisis, Diablo II, Dungeon Siege, The Sims, Delta Force, Rainbow Six and Theme Park.">
 <meta property="og:title" content="Josh Speakman">
 <meta property="og:description" content="Apps, websites, games, and classic PC games restored to run on modern machines.">
 <meta property="og:image" content="https://joshspeakman.github.io/assets/img/og.jpg">
@@ -430,7 +430,7 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
       <p class="eyebrow"><b>&rarr;</b>Where do you want to start?</p>
       <a class="choice" href="#apps" data-go="apps"><span class="k">01<i class="go"></i></span><strong>Apps</strong><span class="d">Desktop apps and utilities, mostly built to scratch my own itch.</span><span class="c">5 apps and utilities</span></a>
       <a class="choice" href="#web" data-go="web"><span class="k">02<i class="go"></i></span><strong>Web work</strong><span class="d">WordPress sites and plugins are my day job. These are the pieces I've open-sourced.</span><span class="c">4 open-source pieces</span></a>
-      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c">8 native ports</span></a>
+      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c" id="port-count">9 native ports</span></a>
       <a class="choice" href="#games" data-go="games"><span class="k">04<i class="go"></i></span><strong>Games</strong><span class="d">Games I've made myself, from a co-op railroad to a terminal duck.</span><span class="c">3 games</span></a>
     </nav>
   </div>
@@ -606,9 +606,14 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
 // gfx: what the Mac app draws with (leave out if not Metal). drag: true when the release is a drag-and-drop app.
 // status: the badge until GitHub answers; after that the badge shows the name of the repo's newest release.
 // games: every title the port covers (expansions too), shown as "Includes" so a search for any one of them finds it.
+// build: true while there's no release to download (you build it with the repo's install script); the first link
+// goes to the install steps, and turns into "Download" by itself once the repo has a release.
 const PORTS = [
   {repo:"OpenPark", title:"Theme Park", year:"1994", by:"Bullfrog", status:"Beta 1.4", plats:["macOS","Windows and Linux next"],
    blurb:"The DOS original, recompiled with a native host. No DOSBox. Adds widescreen, zoom and extras from other editions."},
+  {repo:"survival-horror-classics-macos", gfx:"Metal", build:true, title:"Survival Horror Classics", year:"1997", by:"Capcom", status:"In development", plats:["macOS"],
+   games:["Resident Evil","Resident Evil 2","Resident Evil 3: Nemesis","Dino Crisis"],
+   blurb:"Resident Evil 1–3 and Dino Crisis from your GOG copies, in one app with a card for each game. It can also bring in the voices, music and movies from your own PlayStation discs, and mods from GameBanana."},
   {repo:"delta-force-macos", gfx:"Metal", title:"Delta Force 1 & 2", year:"1998", by:"NovaLogic", status:"Beta 1", plats:["macOS","Linux"],
    games:["Delta Force","Delta Force 2"],
    blurb:"Both games from your Steam copies, with Metal on the Mac and OpenGL on Linux running the same recompiled code."},
@@ -690,11 +695,12 @@ for (const p of PORTS) {
       <p>${esc(p.blurb)}</p>
       ${p.games ? `<div class="games"><span class="k">Includes</span><ul>${p.games.map(g => `<li>${esc(g)}</li>`).join("")}</ul></div>` : ""}
       <ul class="facts">${["Native Apple Silicon", p.gfx, p.drag && "Drag-and-drop installer", "Custom launcher"].filter(Boolean).map(x=>`<li class="tag">${esc(x)}</li>`).join("")}${p.drag ? "" : "<li>Terminal installer</li>"}<li class="br" aria-hidden="true"></li>${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
-      <div class="links"><a class="go" href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a><a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>
+      <div class="links">${p.build ? `<a class="go" href="https://github.com/Joshspeakman/${p.repo}#install" data-install>Install from source</a>` : `<a class="go" href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a>`}<a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>
     </div>
     <span class="state">${esc(p.status)}</span>`;
   list.appendChild(el);
 }
+$("#port-count").textContent = PORTS.length + " native ports";
 
 // Scroll reveals. Anything already above the viewport shows at once; things arriving together stagger.
 try {
@@ -857,6 +863,8 @@ function paint(r){
     if (rel) {
       // a restoration card shows the release in its badge; elsewhere the tag leads the line and links to the release
       if (badge) badge.textContent = rel.name && rel.name.length <= 24 ? rel.name : rel.tag;
+      const inst = card && $("a[data-install]", card);   // a port built from source until now has a release: link the download
+      if (inst) { inst.textContent = "Download"; inst.href = `https://github.com/Joshspeakman/${r.name}/releases`; inst.removeAttribute("data-install"); }
       else bits.push(`<a class="tag" href="${esc(rel.url)}">${esc(rel.tag)}</a>`);
       bits.push(`<span>Released ${esc(fmtDay(rel.published_at))}</span>`);
     }
