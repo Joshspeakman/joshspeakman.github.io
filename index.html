@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Josh Speakman: apps, websites, games and game restoration</title>
-<meta name="description" content="Developer building apps, websites and games, and rebuilding classic PC games as native Mac apps: Resident Evil, Dino Crisis, Diablo II, Dungeon Siege, The Sims, Delta Force, Rainbow Six and Theme Park.">
+<meta name="description" content="Developer building apps, websites and games, and rebuilding classic PC games as native Mac apps: GTA III, Vice City and San Andreas, Fallout: New Vegas, Resident Evil, Diablo II, Ghost Recon, Homeworld, The Sims and more.">
 <meta property="og:title" content="Josh Speakman">
 <meta property="og:description" content="Apps, websites, games, and classic PC games restored to run on modern machines.">
 <meta property="og:image" content="https://joshspeakman.github.io/assets/img/og.jpg">
@@ -430,7 +430,7 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
       <p class="eyebrow"><b>&rarr;</b>Where do you want to start?</p>
       <a class="choice" href="#apps" data-go="apps"><span class="k">01<i class="go"></i></span><strong>Apps</strong><span class="d">Desktop apps and utilities, mostly built to scratch my own itch.</span><span class="c">5 apps and utilities</span></a>
       <a class="choice" href="#web" data-go="web"><span class="k">02<i class="go"></i></span><strong>Web work</strong><span class="d">WordPress sites and plugins are my day job. These are the pieces I've open-sourced.</span><span class="c">4 open-source pieces</span></a>
-      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c" id="port-count">11 native ports</span></a>
+      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c" id="port-count">16 native ports</span></a>
       <a class="choice" href="#games" data-go="games"><span class="k">04<i class="go"></i></span><strong>Games</strong><span class="d">Games I've made myself, from a co-op railroad to a terminal duck.</span><span class="c">3 games</span></a>
     </nav>
   </div>
@@ -500,7 +500,7 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
       <div class="rail" data-reveal>
         <p class="eyebrow" aria-hidden="true"><b>03</b>Restoration</p>
         <h2 class="h2" id="rest-h">Game restoration</h2>
-        <p class="intro">I grew up on these games and I want them to keep working. My current approach takes a game's original Windows or DOS code and rebuilds it as a native app, so it runs on a modern Mac without Wine, Rosetta or an emulator. You bring your own copy; none of the game is in my repos.</p>
+        <p class="intro">I grew up on these games and I want them to keep working. My current approach takes a game's original Windows, DOS or old Mac code and rebuilds it as a native app, so it runs on a modern Mac without Wine, Rosetta or an emulator. You bring your own copy; none of the game is in my repos.</p>
       </div>
       <div>
         <ol class="how">
@@ -631,14 +631,27 @@ const PORTS = [
   {repo:"diablo-2-macos", gfx:"Metal", drag:true, title:"Diablo II", year:"2000", by:"Blizzard North", status:"Beta 4", plats:["macOS"],
    games:["Diablo II","Lord of Destruction"],
    blurb:"Diablo II and Lord of Destruction 1.14d. Drop your game folder on the app and it builds itself, with the original Glide renderer on Metal."},
+  {repo:"ghost-recon-macos", gfx:"Metal", title:"Ghost Recon", year:"2001", by:"Red Storm", status:"Beta 1", plats:["macOS"],
+   games:["Tom Clancy's Ghost Recon","Desert Siege","Island Thunder"],
+   blurb:"Ghost Recon and both expansions from your Steam copies, in one app with a card for each campaign. Direct3D 8 drawn through Metal, with LAN multiplayer."},
+  {repo:"gta-classics-mac", gfx:"Metal", title:"GTA Classics", year:"2001", by:"Rockstar", status:"Alpha 1", plats:["macOS"],
+   games:["Grand Theft Auto III","Vice City","San Andreas"],
+   blurb:"GTA III, Vice City and San Andreas from your Steam copies, in one app: proper widescreen, 60 fps or your display's rate, and the PS2's lighting."},
   {repo:"dungeon-siege-macos", gfx:"Metal", drag:true, title:"Dungeon Siege", year:"2002", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
    games:["Dungeon Siege","Legends of Aranna"],
    blurb:"The full campaign, Legends of Aranna, multiplayer with Windows players and native EAX environmental audio."},
+  {repo:"freedom-force-mac", gfx:"Metal", title:"Freedom Force", year:"2002", by:"Irrational Games", status:"Beta 1", plats:["macOS"],
+   blurb:"Your GOG copy recompiled, with its Direct3D 8 drawn through Metal. A new campaign reaches mission 1 and plays, and all 68 maps load."},
   {repo:"sims-2-macos", gfx:"Metal", title:"The Sims 2", year:"2004", by:"Maxis", status:"Beta 1", plats:["macOS"],
    games:["The Sims 2","University","Nightlife","Open for Business","Pets","Seasons","Bon Voyage","FreeTime","Apartment Life","Stuff packs"],
    blurb:"The Legacy Collection from Steam on Metal. Your game folder is only read; nothing is written to it."},
   {repo:"dungeon-siege-2-macos", gfx:"Metal", drag:true, title:"Dungeon Siege II", year:"2005", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
-   blurb:"The GOG 2.3 release at 120 fps with LAN multiplayer and EAX audio. Builds on your Mac in about six minutes."}
+   blurb:"The GOG 2.3 release at 120 fps with LAN multiplayer and EAX audio. Builds on your Mac in about six minutes."},
+  {repo:"fallout-nv-mac", gfx:"Metal", title:"Fallout: New Vegas", year:"2010", by:"Obsidian", status:"Alpha 1", plats:["macOS","Linux"],
+   blurb:"Your GOG copy recompiled, with the game's own shaders translated to Metal. Plays from the intro into the open world at a locked 60 fps."},
+  {repo:"homeworld-remastered-mac", gfx:"Metal", title:"Homeworld Remastered", year:"2015", by:"Gearbox", status:"Beta 1", plats:["macOS"],
+   games:["Homeworld Remastered","Homeworld 2 Remastered"],
+   blurb:"The Steam Mac edition is a 32-bit Intel app that current Macs can't run. Recompiled to arm64, with its OpenGL drawn through Metal, and playable into the campaign."}
 ];
 
 const root = document.documentElement;
