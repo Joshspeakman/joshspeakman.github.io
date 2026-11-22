@@ -18,6 +18,6 @@ GitHub turns off scheduled workflows in a public repo after 60 days with no acti
 
 ## Editing
 
-To add a restoration project, edit the `PORTS` list near the bottom of `index.html`. Each entry gets the tags Native Apple Silicon and Custom launcher; set `gfx` (for example `"Metal"`) and `drag: true` (a drag-and-drop app in the release) to add those two. Its badge shows the name of the repo's newest release; `status` is only what it says until that loads. Screenshots live in `assets/img`. Colours, fonts and animation timings are the variables at the top of the stylesheet.
+To add a restoration project, edit the `PORTS` list near the bottom of `index.html`. Each entry gets the tags Native Apple Silicon and Custom launcher; set `gfx` (for example `"Metal"`) and `drag: true` (a drag-and-drop app in the release) to add those two. Its badge shows the name of the repo's newest release; `status` is only what it says until that loads. List every title the port covers (each game, expansion or collection) in `games`; they show as an "Includes" row, so someone searching for any one of them finds the card. Leave out titles the port doesn't support. Screenshots live in `assets/img`. Colours, fonts and animation timings are the variables at the top of the stylesheet.
 
 The page runs in four groups: apps, web work, restoration, games. The four cards under the hero (and the header links) show one group at a time; `?show=apps`, `?show=web`, `?show=restoration` or `?show=games` opens the page already filtered, and a link to a specific card always shows everything.

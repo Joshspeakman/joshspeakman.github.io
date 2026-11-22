@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Josh Speakman: apps, websites, games and game restoration</title>
-<meta name="description" content="Developer building apps, websites and games, and restoring classic PC games like Diablo II, Dungeon Siege and The Sims 2 to run natively on modern machines.">
+<meta name="description" content="Developer building apps, websites and games, and rebuilding classic PC games as native Mac apps: Diablo II, Dungeon Siege, The Sims, Delta Force, Rainbow Six and Theme Park.">
 <meta property="og:title" content="Josh Speakman">
 <meta property="og:description" content="Apps, websites, games, and classic PC games restored to run on modern machines.">
 <meta property="og:image" content="https://joshspeakman.github.io/assets/img/og.jpg">
@@ -234,6 +234,11 @@ section{margin-top:140px}
 .rcard p{margin:0 0 16px;font-size:.96rem;max-width:36em;color:var(--soft)}
 /* the tag row may run on under the status pill, which only occupies the first line */
 .rcard .facts{margin:0 -76px 18px 0}
+/* every title a port covers, as a row of name chips: square-cornered so they read as titles, not features */
+.rcard .games{display:flex;align-items:flex-start;gap:10px;margin:-4px 0 14px}
+.rcard .games .k{flex:none;font:500 .66rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:8px}
+.rcard .games ul{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.rcard .games li{font:500 .84rem/1 var(--sans);letter-spacing:-.005em;padding:6px 10px;border-radius:6px;background:rgba(255,255,255,.065);color:var(--text);white-space:nowrap}
 /* what makes it a native port: these tags stand out from the plain platform chips */
 /* platforms start their own line under the tags */
 .facts li.br{flex-basis:100%;height:0;padding:0;border:0;margin-top:-6px}
@@ -331,6 +336,8 @@ dialog.lb[open]::backdrop{animation:fade var(--mid) var(--ease)}
   .rcard .state{grid-column:2;grid-row:1;justify-self:start;margin:0 0 12px}
   .rcard .main{grid-column:2}
   .rcard .facts{margin-right:0}
+  .rcard .games{display:block}
+  .rcard .games .k{display:block;padding:0;margin-bottom:8px}
   .list li{grid-template-columns:1fr;gap:8px}
   footer{margin-top:110px;padding-top:80px}
   footer .row{margin-bottom:64px}
@@ -598,20 +605,26 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
 // Restoration projects, oldest original first. Every one is a native Apple Silicon app with its own launch window.
 // gfx: what the Mac app draws with (leave out if not Metal). drag: true when the release is a drag-and-drop app.
 // status: the badge until GitHub answers; after that the badge shows the name of the repo's newest release.
+// games: every title the port covers (expansions too), shown as "Includes" so a search for any one of them finds it.
 const PORTS = [
   {repo:"OpenPark", title:"Theme Park", year:"1994", by:"Bullfrog", status:"Beta 1.4", plats:["macOS","Windows and Linux next"],
    blurb:"The DOS original, recompiled with a native host. No DOSBox. Adds widescreen, zoom and extras from other editions."},
   {repo:"delta-force-macos", gfx:"Metal", title:"Delta Force 1 & 2", year:"1998", by:"NovaLogic", status:"Beta 1", plats:["macOS","Linux"],
+   games:["Delta Force","Delta Force 2"],
    blurb:"Both games from your Steam copies, with Metal on the Mac and OpenGL on Linux running the same recompiled code."},
   {repo:"rainbow-six-macos", gfx:"Metal", title:"Rainbow Six", year:"1998", by:"Red Storm", status:"Beta 1", plats:["macOS","Linux"],
    blurb:"The GOG 1.04 release. Single player runs; the game's own LAN co-op, Mac and Linux players together, is in alpha testing."},
   {repo:"sims-legacy-macos", gfx:"Vulkan on Metal", title:"The Sims", year:"2000", by:"Maxis", status:"Beta 1", plats:["macOS"],
+   games:["The Sims Legacy Collection"],
    blurb:"The 2025 Legacy Collection. The game draws with Vulkan, and the app runs that Vulkan directly on Metal."},
   {repo:"diablo-2-macos", gfx:"Metal", drag:true, title:"Diablo II", year:"2000", by:"Blizzard North", status:"Beta 4", plats:["macOS"],
+   games:["Diablo II","Lord of Destruction"],
    blurb:"Diablo II and Lord of Destruction 1.14d. Drop your game folder on the app and it builds itself, with the original Glide renderer on Metal."},
   {repo:"dungeon-siege-macos", gfx:"Metal", drag:true, title:"Dungeon Siege", year:"2002", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
+   games:["Dungeon Siege","Legends of Aranna"],
    blurb:"The full campaign, Legends of Aranna, multiplayer with Windows players and native EAX environmental audio."},
   {repo:"sims-2-macos", gfx:"Metal", title:"The Sims 2", year:"2004", by:"Maxis", status:"Beta 1", plats:["macOS"],
+   games:["The Sims 2","University","Nightlife","Open for Business","Pets","Seasons","Bon Voyage","FreeTime","Apartment Life","Stuff packs"],
    blurb:"The Legacy Collection from Steam on Metal. Your game folder is only read; nothing is written to it."},
   {repo:"dungeon-siege-2-macos", gfx:"Metal", drag:true, title:"Dungeon Siege II", year:"2005", by:"Gas Powered Games", status:"Beta 3", plats:["macOS"],
    blurb:"The GOG 2.3 release at 120 fps with LAN multiplayer and EAX audio. Builds on your Mac in about six minutes."}
@@ -675,6 +688,7 @@ for (const p of PORTS) {
       <h3>${esc(p.title)}</h3>
       <p class="orig">${esc(p.by)}, ${p.year}</p>
       <p>${esc(p.blurb)}</p>
+      ${p.games ? `<div class="games"><span class="k">Includes</span><ul>${p.games.map(g => `<li>${esc(g)}</li>`).join("")}</ul></div>` : ""}
       <ul class="facts">${["Native Apple Silicon", p.gfx, p.drag && "Drag-and-drop installer", "Custom launcher"].filter(Boolean).map(x=>`<li class="tag">${esc(x)}</li>`).join("")}${p.drag ? "" : "<li>Terminal installer</li>"}<li class="br" aria-hidden="true"></li>${p.plats.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
       <div class="links"><a class="go" href="https://github.com/Joshspeakman/${p.repo}/releases">Download</a><a href="https://github.com/Joshspeakman/${p.repo}">Source and setup</a><span class="live" data-repo="${p.repo}"></span></div>
     </div>
