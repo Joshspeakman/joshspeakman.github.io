@@ -430,7 +430,7 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
       <p class="eyebrow"><b>&rarr;</b>Where do you want to start?</p>
       <a class="choice" href="#apps" data-go="apps"><span class="k">01<i class="go"></i></span><strong>Apps</strong><span class="d">Desktop apps and utilities, mostly built to scratch my own itch.</span><span class="c">5 apps and utilities</span></a>
       <a class="choice" href="#web" data-go="web"><span class="k">02<i class="go"></i></span><strong>Web work</strong><span class="d">WordPress sites and plugins are my day job. These are the pieces I've open-sourced.</span><span class="c">4 open-source pieces</span></a>
-      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c" id="port-count">9 native ports</span></a>
+      <a class="choice" href="#restoration" data-go="restoration"><span class="k">03<i class="go"></i></span><strong>Restoration</strong><span class="d">Classic PC games rebuilt as native apps, so they run on modern machines.</span><span class="c" id="port-count">11 native ports</span></a>
       <a class="choice" href="#games" data-go="games"><span class="k">04<i class="go"></i></span><strong>Games</strong><span class="d">Games I've made myself, from a co-op railroad to a terminal duck.</span><span class="c">3 games</span></a>
     </nav>
   </div>
@@ -609,6 +609,9 @@ html[data-show="apps"] .more [data-go="apps"],html[data-show="web"] .more [data-
 // build: true while there's no release to download (you build it with the repo's install script); the first link
 // goes to the install steps, and turns into "Download" by itself once the repo has a release.
 const PORTS = [
+  {repo:"brutal-doom-macos", title:"Brutal Doom Collection", year:"1993", by:"id Software", status:"Beta 1", plats:["macOS"],
+   games:["Brutal Doom","Doom","Doom II","Chex Quest","Brutal Wolfenstein","Brutal Doom 64","Brutal Hexen RPG","Schism","Project Brutality","Aliens: Eradication","Lambda: Half-Life Arsenal"],
+   blurb:"A native Mac launcher for GZDoom and twelve games and mods, each with its own settings and saves. Not a recompilation: you bring GZDoom, your game files and the mods."},
   {repo:"OpenPark", title:"Theme Park", year:"1994", by:"Bullfrog", status:"Beta 1.4", plats:["macOS","Windows and Linux next"],
    blurb:"The DOS original, recompiled with a native host. No DOSBox. Adds widescreen, zoom and extras from other editions."},
   {repo:"survival-horror-classics-macos", gfx:"Metal", build:true, title:"Survival Horror Classics", year:"1997", by:"Capcom", status:"In development", plats:["macOS"],
@@ -619,6 +622,9 @@ const PORTS = [
    blurb:"Both games from your Steam copies, with Metal on the Mac and OpenGL on Linux running the same recompiled code."},
   {repo:"rainbow-six-macos", gfx:"Metal", title:"Rainbow Six", year:"1998", by:"Red Storm", status:"Beta 1", plats:["macOS","Linux"],
    blurb:"The GOG 1.04 release. Single player runs; the game's own LAN co-op, Mac and Linux players together, is in alpha testing."},
+  {repo:"brutal-half-life-macos", gfx:"Metal", title:"Brutal Half-Life", year:"1998", by:"Valve", status:"Beta 1", plats:["macOS"],
+   games:["Half-Life","Brutal Half-Life v3"],
+   blurb:"The mod's original x86 modules translated to ARM64 and run on a native Xash3D engine drawing with Metal. Bring your own Half-Life and the mod's archive."},
   {repo:"sims-legacy-macos", gfx:"Vulkan on Metal", title:"The Sims", year:"2000", by:"Maxis", status:"Beta 1", plats:["macOS"],
    games:["The Sims Legacy Collection"],
    blurb:"The 2025 Legacy Collection. The game draws with Vulkan, and the app runs that Vulkan directly on Metal."},
@@ -862,10 +868,11 @@ function paint(r){
     const card = el.closest(".rcard"), badge = card && $(".state", card), bits = [];
     if (rel) {
       // a restoration card shows the release in its badge; elsewhere the tag leads the line and links to the release
-      if (badge) badge.textContent = rel.name && rel.name.length <= 24 ? rel.name : rel.tag;
-      const inst = card && $("a[data-install]", card);   // a port built from source until now has a release: link the download
-      if (inst) { inst.textContent = "Download"; inst.href = `https://github.com/Joshspeakman/${r.name}/releases`; inst.removeAttribute("data-install"); }
-      else bits.push(`<a class="tag" href="${esc(rel.url)}">${esc(rel.tag)}</a>`);
+      if (badge) {
+        badge.textContent = rel.name && rel.name.length <= 24 ? rel.name : rel.tag;
+        const inst = $("a[data-install]", card);   // a port built from source until now has a release: link the download
+        if (inst) { inst.textContent = "Download"; inst.href = `https://github.com/Joshspeakman/${r.name}/releases`; inst.removeAttribute("data-install"); }
+      } else bits.push(`<a class="tag" href="${esc(rel.url)}">${esc(rel.tag)}</a>`);
       bits.push(`<span>Released ${esc(fmtDay(rel.published_at))}</span>`);
     }
     if (r.stargazers_count) bits.push(`<span>${r.stargazers_count} star${r.stargazers_count === 1 ? "" : "s"}</span>`);
